@@ -4,8 +4,16 @@
  */
 package View;
 
+import Controller.AddUpdateController;
+import Entity.Category;
+import Model.AddUpdateModel;
 import java.awt.Color;
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.Locale;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -13,11 +21,13 @@ import javax.swing.ImageIcon;
  */
 public class AddUpdateForm extends javax.swing.JFrame {
 
-    /**
-     * Creates new form AddUpdateForm
-     */
+    // DECLARATION
+    private AddUpdateModel addUpdateModel = new AddUpdateModel();
+    private AddUpdateController addUpdateController;
+    
     public AddUpdateForm() {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Center the views
         this.setLocationRelativeTo(null);
         // Set background color
@@ -27,6 +37,32 @@ public class AddUpdateForm extends javax.swing.JFrame {
         ImageIcon icon = new ImageIcon(getClass().getResource("/Assets/logo.png")); // Replace with the actual path
         setIconImage(icon.getImage());
         setTitle("BM Restaurant");
+        
+        addUpdateController = new AddUpdateController(addUpdateModel, this);
+        addUpdateController.loadCategories();
+    }
+    
+    public AddUpdateForm(String cat, String name, double price) {
+        initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        // Center the views
+        this.setLocationRelativeTo(null);
+        // Set background color
+        Color backgroundColor = new Color(170,244,231);
+        getContentPane().setBackground(backgroundColor);
+        // Set icon image and title
+        ImageIcon icon = new ImageIcon(getClass().getResource("/Assets/logo.png")); // Replace with the actual path
+        setIconImage(icon.getImage());
+        setTitle("BM Restaurant");
+        
+        addUpdateController = new AddUpdateController(addUpdateModel, this);
+        addUpdateController.loadCategories();
+        
+        // Set selected category in the combo box
+        setCategoryComboBox(cat);
+        txtName.setText(name);
+        String formattedNumber = formatWithCommas(price);
+        txtPrice.setText(String.valueOf(formattedNumber));
     }
 
     /**
@@ -40,11 +76,11 @@ public class AddUpdateForm extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtUsername = new javax.swing.JTextField();
-        btnLogin = new javax.swing.JButton();
-        txtPassword = new javax.swing.JPasswordField();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        txtName = new javax.swing.JTextField();
+        btnUpsert = new javax.swing.JButton();
+        cbbCategory = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
+        txtPrice = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -54,29 +90,33 @@ public class AddUpdateForm extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(66, 134, 245));
         jLabel1.setText("FORM");
 
-        txtUsername.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Name", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 0, 14))); // NOI18N
-        txtUsername.setMinimumSize(new java.awt.Dimension(70, 41));
-        txtUsername.setPreferredSize(new java.awt.Dimension(70, 41));
+        txtName.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Name", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 0, 14))); // NOI18N
+        txtName.setMinimumSize(new java.awt.Dimension(70, 41));
+        txtName.setPreferredSize(new java.awt.Dimension(70, 41));
 
-        btnLogin.setBackground(new java.awt.Color(66, 134, 245));
-        btnLogin.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
-        btnLogin.setForeground(new java.awt.Color(255, 255, 255));
-        btnLogin.setText("Upsert");
-        btnLogin.addActionListener(new java.awt.event.ActionListener() {
+        btnUpsert.setBackground(new java.awt.Color(66, 134, 245));
+        btnUpsert.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        btnUpsert.setForeground(new java.awt.Color(255, 255, 255));
+        btnUpsert.setText("Upsert");
+        btnUpsert.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLoginActionPerformed(evt);
+                btnUpsertActionPerformed(evt);
             }
         });
 
-        txtPassword.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Price", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 0, 14))); // NOI18N
-        txtPassword.setMinimumSize(new java.awt.Dimension(70, 41));
-        txtPassword.setPreferredSize(new java.awt.Dimension(70, 41));
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.setBorder(null);
+        cbbCategory.setBorder(null);
 
         jLabel2.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
         jLabel2.setText("Category");
+
+        txtPrice.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Price", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 0, 14))); // NOI18N
+        txtPrice.setMinimumSize(new java.awt.Dimension(70, 41));
+        txtPrice.setPreferredSize(new java.awt.Dimension(70, 41));
+        txtPrice.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPriceKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -85,14 +125,14 @@ public class AddUpdateForm extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                    .addComponent(btnUpsert, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbbCategory, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGap(8, 8, 8)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPrice, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -103,13 +143,13 @@ public class AddUpdateForm extends javax.swing.JFrame {
                 .addGap(24, 24, 24)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cbbCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24)
+                .addComponent(btnUpsert, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
@@ -133,9 +173,41 @@ public class AddUpdateForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+    private void btnUpsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpsertActionPerformed
+        String tmpCategory = String.valueOf(cbbCategory.getSelectedItem());
+        String name = txtName.getText();
+        String tmpPrice = txtPrice.getText();
+        if ( !name.isBlank() || !tmpPrice.isBlank())
+        {
+            try {
+                double price = Double.parseDouble(tmpPrice);
+                String[] parts = tmpCategory.split("-");
+                String category = parts[0].trim();
+                addUpdateController.addDish(Integer.parseInt(category), name, price);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid price format. Please enter a valid number!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else
+            JOptionPane.showMessageDialog(this, "Please complete the form!");
 
-    }//GEN-LAST:event_btnLoginActionPerformed
+    }//GEN-LAST:event_btnUpsertActionPerformed
+
+    private void txtPriceKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPriceKeyTyped
+        String tmpPrice = txtPrice.getText();
+        if (!tmpPrice.isBlank())
+        {
+            try {
+            double price = Double.parseDouble(tmpPrice);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid price format. Please enter a valid number!", "Error", JOptionPane.ERROR_MESSAGE);
+                // Remove the last character from the input
+                if (tmpPrice.length() > 0) {
+                    txtPrice.setText(tmpPrice.substring(0, tmpPrice.length() - 1));
+                }
+            }
+        }
+    }//GEN-LAST:event_txtPriceKeyTyped
 
     /**
      * @param args the command line arguments
@@ -173,12 +245,50 @@ public class AddUpdateForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnLogin;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton btnUpsert;
+    private javax.swing.JComboBox<String> cbbCategory;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPasswordField txtPassword;
-    private javax.swing.JTextField txtUsername;
+    private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtPrice;
     // End of variables declaration//GEN-END:variables
+
+    private String formatWithCommas(double number) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+        return numberFormat.format(number);
+    }
+    
+    private void setCategoryComboBox(String selectedCategory) {
+        for (int i = 0; i < cbbCategory.getItemCount(); i++) {
+        String item = cbbCategory.getItemAt(i);
+        
+        String[] parts = item.split("-");
+        String tmpCategory = parts[1].trim();
+        
+        if (tmpCategory.equals(selectedCategory)) {
+            cbbCategory.setSelectedIndex(i);
+            break;
+            }
+        }
+    }
+    
+    public void resultAddDish(int result) {
+    switch (result) {
+        case 0 -> JOptionPane.showMessageDialog(this, "The Dish has already existed!");
+        case 1 -> {
+            JOptionPane.showMessageDialog(this, "New Dish has been added!");
+            this.dispose(); // Close the form
+        }
+        case -1 -> JOptionPane.showMessageDialog(this, "Cannot add, try again!");
+        default -> JOptionPane.showMessageDialog(this, "There was a sudden error, try again!");
+    }
+}
+    
+    public void displayCategories(List<Category> categories) {
+        for (Category model : categories) 
+        {
+            cbbCategory.addItem(model.getId() + " - " + model.getName());
+        }
+    }
 }
