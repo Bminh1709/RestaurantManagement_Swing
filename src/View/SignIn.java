@@ -4,8 +4,11 @@
  */
 package View;
 
+import Controller.AccessController;
+import Model.AccessModel;
 import java.awt.Color;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -13,9 +16,9 @@ import javax.swing.ImageIcon;
  */
 public class SignIn extends javax.swing.JFrame {
 
-    /**
-     * Creates new form SignIn
-     */
+    // final: cannot change value when assigned its value
+    final AccessModel accessModel = new AccessModel();
+
     public SignIn() {
         initComponents();
         // Center the views
@@ -27,6 +30,7 @@ public class SignIn extends javax.swing.JFrame {
         ImageIcon icon = new ImageIcon(getClass().getResource("/Assets/logo.png")); // Replace with the actual path
         setIconImage(icon.getImage());
         setTitle("BM Restaurant");
+
     }
 
     /**
@@ -130,7 +134,26 @@ public class SignIn extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        
+        String username = txtUsername.getText();
+        char[] passwordChars = txtPassword.getPassword();
+
+        if (username.isEmpty() || passwordChars.length == 0) {
+            JOptionPane.showMessageDialog(this, "Please complete the form!");
+            return;
+        }
+
+        // Parse char[] to String
+        String password = new String(passwordChars);
+
+        // Call method in controller
+        boolean checkSignin = new AccessController(accessModel, this).SignIn(username, password);
+
+        if (checkSignin) {
+            this.dispose();
+            new Navigation().setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Check Username and Password again!", "Sign In Failed", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void ckbShowPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbShowPassActionPerformed
