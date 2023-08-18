@@ -9,11 +9,15 @@ import CustomEntity.DishDetail;
 import Entity.Category;
 import Model.MenuModel;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -45,7 +49,7 @@ public class Menu extends javax.swing.JFrame {
         tblDish.setRowHeight(30);
         dishTableModel = (DefaultTableModel)tblDish.getModel();
         
-        // Load data on table when initialize the program
+        // Load data on Jtable when initialize the program
         menuController = new MenuController(menuModel, this);
         menuController.loadDishes();
         menuController.loadCategories();
@@ -70,9 +74,10 @@ public class Menu extends javax.swing.JFrame {
         btnAdd = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        btnImport = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        btnReload = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -140,9 +145,14 @@ public class Menu extends javax.swing.JFrame {
             }
         });
 
-        jButton5.setBackground(new java.awt.Color(170, 244, 231));
-        jButton5.setFont(new java.awt.Font("Bahnschrift", 0, 12)); // NOI18N
-        jButton5.setText("Import Dish");
+        btnImport.setBackground(new java.awt.Color(170, 244, 231));
+        btnImport.setFont(new java.awt.Font("Bahnschrift", 0, 12)); // NOI18N
+        btnImport.setText("Import Dish");
+        btnImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImportActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -154,7 +164,7 @@ public class Menu extends javax.swing.JFrame {
                     .addComponent(btnAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnImport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -167,7 +177,7 @@ public class Menu extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnImport, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -183,6 +193,14 @@ public class Menu extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Bahnschrift", 1, 20)); // NOI18N
         jLabel1.setText("BM Restaurant");
 
+        btnReload.setBackground(new java.awt.Color(170, 244, 231));
+        btnReload.setText("Reload");
+        btnReload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReloadActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -196,7 +214,9 @@ public class Menu extends javax.swing.JFrame {
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(47, 47, 47)
-                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnReload, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -207,6 +227,8 @@ public class Menu extends javax.swing.JFrame {
                 .addGap(28, 28, 28)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnReload, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(25, 25, 25))
         );
@@ -286,9 +308,62 @@ public class Menu extends javax.swing.JFrame {
         else
         {
             DishDetail model = tmpDishes.get(selectedIndex);
-            new AddUpdateForm(model.getCategory(), model.getDish(), model.getPrice()).setVisible(true);
+            new AddUpdateForm(model.getDishID(), model.getCategory(), model.getDish(), model.getPrice()).setVisible(true);
         }
     }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReloadActionPerformed
+        menuController.loadDishes();
+    }//GEN-LAST:event_btnReloadActionPerformed
+
+    private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
+        JFileChooser fileChooser = new JFileChooser(); // Initial a JFileChooser
+        fileChooser.setDialogTitle("Chọn file muốn nhập");
+        int userSelection = fileChooser.showOpenDialog(this); // showOpenDialog - Import
+        int count = 0; // Count the element that exist in DB
+        String msg = "";
+        if(userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToImport = fileChooser.getSelectedFile();
+            try {
+                FileReader fr = new FileReader(fileToImport);
+                BufferedReader br = new BufferedReader(fr); // Object that reads character input from a Reader
+                
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] row = line.split(",");
+                    if (row.length >= 3) {
+                        String[] parts = row[0].trim().split("-");
+                        String category = parts[0].trim();
+                        String name = row[1].trim();
+                        double price = Double.parseDouble(row[2].trim());
+                        
+                        count++;
+                        boolean checkAddDish = menuController.addDataToDB(Integer.parseInt(category), name, price);
+                        if (checkAddDish == false) {
+                            msg = msg + "Dish at line " + count + " already existed! \n";
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, 
+                                "Wrong format", 
+                                "Warning", 
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                if (msg.length() <= 0 || msg.isEmpty())
+                {
+                    JOptionPane.showMessageDialog(this, "Import file successfully!");
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(this, msg + "But we added the others!");
+                }
+                br.close();
+                fr.close();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Import file fail!");
+            }
+        }        
+    }//GEN-LAST:event_btnImportActionPerformed
 
     /**
      * @param args the command line arguments
@@ -328,10 +403,11 @@ public class Menu extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnImport;
+    private javax.swing.JButton btnReload;
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cbbCategory;
-    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

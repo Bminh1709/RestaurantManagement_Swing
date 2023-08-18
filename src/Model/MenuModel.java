@@ -113,5 +113,40 @@ public class MenuModel extends DB{
         }
     }
 
+    public boolean checkDishExist(int idCat, String name) {
+        String sql = "SELECT * FROM `dish` WHERE catogoryId = ? AND name = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, idCat);
+            ps.setString(2, name);
+
+            ResultSet rs = ps.executeQuery();
+
+            // Check if is there any rows (check if Dish already existed)
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean addDish(int idCat, String name, double price) {
+        String sql = "INSERT INTO `dish`(`id`, `catogoryId`, `name`, `price`) VALUES (NULL,?,?,?)";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, idCat);
+            ps.setString(2, name);
+            ps.setDouble(3, price);
+
+            // Execute the deletion query
+            int rowsAffected = ps.executeUpdate();
+
+            // Check if any rows were affected (deleted)
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }
