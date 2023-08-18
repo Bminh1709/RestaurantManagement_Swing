@@ -71,4 +71,24 @@ public class AddUpdateModel extends DB {
             return false;
         }
     }
+    
+     public boolean updateDish(int idDish, int idCat, String name, double price) {
+        String sql = "UPDATE `dish` SET `catogoryId`=?,`name`=?,`price`=? WHERE id = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, idCat);
+            ps.setString(2, name);
+            ps.setDouble(3, price);
+            ps.setInt(4, idDish);
+
+            // Execute the deletion query
+            int rowsAffected = ps.executeUpdate();
+
+            // Check if any rows were affected (deleted)
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

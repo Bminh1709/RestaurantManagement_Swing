@@ -4,10 +4,11 @@
  */
 package View;
 
-import Controller.AddUpdateController;
+import Controller.AddUpdateDishController;
 import Entity.Category;
 import Model.AddUpdateModel;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -23,7 +24,9 @@ public class AddUpdateForm extends javax.swing.JFrame {
 
     // DECLARATION
     private AddUpdateModel addUpdateModel = new AddUpdateModel();
-    private AddUpdateController addUpdateController;
+    private AddUpdateDishController addUpdateController;
+    private boolean updateRequest = false;
+    private int dishId;
     
     public AddUpdateForm() {
         initComponents();
@@ -38,11 +41,11 @@ public class AddUpdateForm extends javax.swing.JFrame {
         setIconImage(icon.getImage());
         setTitle("BM Restaurant");
         
-        addUpdateController = new AddUpdateController(addUpdateModel, this);
+        addUpdateController = new AddUpdateDishController(addUpdateModel, this);
         addUpdateController.loadCategories();
     }
     
-    public AddUpdateForm(String cat, String name, double price) {
+    public AddUpdateForm(int dishId, String cat, String name, double price) {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Center the views
@@ -55,7 +58,7 @@ public class AddUpdateForm extends javax.swing.JFrame {
         setIconImage(icon.getImage());
         setTitle("BM Restaurant");
         
-        addUpdateController = new AddUpdateController(addUpdateModel, this);
+        addUpdateController = new AddUpdateDishController(addUpdateModel, this);
         addUpdateController.loadCategories();
         
         // Set selected category in the combo box
@@ -63,6 +66,10 @@ public class AddUpdateForm extends javax.swing.JFrame {
         txtName.setText(name);
         String formattedNumber = formatWithCommas(price);
         txtPrice.setText(String.valueOf(formattedNumber));
+        
+        // Set updateRequest = true ==> use the same form for both adđ and update
+        updateRequest = true;
+        this.dishId = dishId;
     }
 
     /**
@@ -179,11 +186,16 @@ public class AddUpdateForm extends javax.swing.JFrame {
         String tmpPrice = txtPrice.getText();
         if ( !name.isBlank() || !tmpPrice.isBlank())
         {
+            tmpPrice = tmpPrice.replace(",", ""); // Remove comma before parse
+            
             try {
                 double price = Double.parseDouble(tmpPrice);
                 String[] parts = tmpCategory.split("-");
                 String category = parts[0].trim();
-                addUpdateController.addDish(Integer.parseInt(category), name, price);
+                if (updateRequest == true)
+                    addUpdateController.updateDish(dishId, Integer.parseInt(category), name, price);
+                else
+                    addUpdateController.addDish(Integer.parseInt(category), name, price);
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Invalid price format. Please enter a valid number!", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -194,18 +206,13 @@ public class AddUpdateForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnUpsertActionPerformed
 
     private void txtPriceKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPriceKeyTyped
+        char c = evt.getKeyChar();
         String tmpPrice = txtPrice.getText();
-        if (!tmpPrice.isBlank())
-        {
-            try {
-            double price = Double.parseDouble(tmpPrice);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Invalid price format. Please enter a valid number!", "Error", JOptionPane.ERROR_MESSAGE);
-                // Remove the last character from the input
-                if (tmpPrice.length() > 0) {
-                    txtPrice.setText(tmpPrice.substring(0, tmpPrice.length() - 1));
-                }
-            }
+
+        if (!Character.isDigit(c) && c != ',' && c != KeyEvent.VK_BACK_SPACE) {
+            evt.consume(); // prevent typing more
+        } else if (c == ',' && tmpPrice.contains(",")) {
+            evt.consume();
         }
     }//GEN-LAST:event_txtPriceKeyTyped
 
@@ -273,11 +280,11 @@ public class AddUpdateForm extends javax.swing.JFrame {
         }
     }
     
-    public void resultAddDish(int result) {
+    public void resultAddUpdateDish(int result) {
     switch (result) {
         case 0 -> JOptionPane.showMessageDialog(this, "The Dish has already existed!");
         case 1 -> {
-            JOptionPane.showMessageDialog(this, "New Dish has been added!");
+            JOptionPane.showMessageDialog(this, "New Dish has been upserted!");
             this.dispose(); // Close the form
         }
         case -1 -> JOptionPane.showMessageDialog(this, "Cannot add, try again!");

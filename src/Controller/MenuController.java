@@ -46,4 +46,20 @@ public class MenuController extends DB{
         Boolean checkDeleteDish = menuModel.deleteDish(id);
         menuView.resultDeleteDish(checkDeleteDish);
     } 
+    
+    public boolean addDataToDB(int idCat, String name, double price) {
+        boolean checkDishExist = menuModel.checkDishExist(idCat, name);
+        if (checkDishExist) {
+            return false;
+        }
+        else
+        {
+            boolean checkAddDish = menuModel.addDish(idCat, name, price);
+            if (checkAddDish) {
+                return true;
+            }
+            else
+                return false;
+        }
+    }
 }
