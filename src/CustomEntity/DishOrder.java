@@ -17,6 +17,13 @@ public class DishOrder {
     public DishOrder() {
     }
 
+    public DishOrder(int id, String name, int quantity, double totalPrice) {
+        this.id = id;
+        this.name = name;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+    }
+   
     public int getId() {
         return id;
     }

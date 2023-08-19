@@ -23,13 +23,43 @@ public class AccessModelTest {
 
     @Test
     public void testAuthenticate() {
-        System.out.println("authenticate");
-        String username = "adminms4";
-        String password = "1232d";
         AccessModel instance = new AccessModel();
-        boolean expResult = false;
-        boolean result = instance.authenticate(username, password);
-        assertEquals(expResult, result);
+
+        // Valid account
+        {
+            String username = "admin";
+            String password = "123";
+            boolean expResult = true;
+            boolean result = instance.authenticate(username, password);
+            assertEquals(expResult, result);
+        }
+
+        // Invalid username
+        {
+            String username = "nonexistent";
+            String password = "123";
+            boolean expResult = false;
+            boolean result = instance.authenticate(username, password);
+            assertEquals(expResult, result);
+        }
+
+        // Incorrect password
+        {
+            String username = "admin";
+            String password = "wrongpassword";
+            boolean expResult = false;
+            boolean result = instance.authenticate(username, password);
+            assertEquals(expResult, result);
+        }
+
+        // Empty credentials
+        {
+            String username = "";
+            String password = "";
+            boolean expResult = false;
+            boolean result = instance.authenticate(username, password);
+            assertEquals(expResult, result);
+        }
     }
     
 }

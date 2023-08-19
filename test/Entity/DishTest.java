@@ -38,7 +38,7 @@ public class DishTest {
     }
 
     @Test
-    public void testSetAttributes() {
+    public void testSet() {
         Dish instance = new Dish();
         instance.setId(5);
         instance.setCategoryId(12);
