@@ -17,6 +17,15 @@ public class Dish {
     public Dish() {
     }
 
+    public Dish(int id, int categoryId, String name, double price) {
+        this.id = id;
+        this.categoryId = categoryId;
+        this.name = name;
+        this.price = price;
+    }
+    
+    
+
     public int getId() {
         return id;
     }
