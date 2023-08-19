@@ -5,7 +5,6 @@
 package View;
 
 import Controller.TableController;
-import CustomEntity.DishDetail;
 import Entity.Order;
 import Model.TableModel;
 import java.awt.Color;
@@ -342,7 +341,7 @@ public class TableManagement extends javax.swing.JFrame {
             return;
         }
         Order model = tmpOrders.get(selectedIndex);
-        //new Invoice(model.getId()).setVisible(true);
+        new Invoice(model.getId()).setVisible(true);
     }//GEN-LAST:event_btnInvoiceActionPerformed
 
     private void btnAddDishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDishActionPerformed
@@ -448,6 +447,4 @@ public class TableManagement extends javax.swing.JFrame {
         tableController.setTotalPrice(id);
     }
     
-    
-
 }

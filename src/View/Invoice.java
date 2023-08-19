@@ -6,13 +6,20 @@ package View;
 
 import Controller.InvoiceController;
 import CustomEntity.DishOrder;
+import Entity.Order;
 import Model.InvoiceModel;
 import java.awt.Color;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -25,8 +32,13 @@ public class Invoice extends javax.swing.JFrame {
     private InvoiceController invoiceController;
     private InvoiceModel invoiceModel = new InvoiceModel();
     private DefaultTableModel orderDishesTableModel;
+    private int orderID;
+    private String customerName;
+    private boolean status;
+    private Date dateOrder;
+    private String totalPrice;
     
-    public Invoice() {
+    public Invoice(int id) {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Center the views
@@ -40,9 +52,12 @@ public class Invoice extends javax.swing.JFrame {
         setTitle("BM Restaurant");
         tblDishOrder.setRowMargin(30);
         orderDishesTableModel = (DefaultTableModel)tblDishOrder.getModel();
+        orderID = id;
         
         invoiceController = new InvoiceController(invoiceModel, this);
-        invoiceController.getListOrderDishes(7);
+        invoiceController.getListOrderDishes(id);
+        invoiceController.getTotalMoney(id);
+        invoiceController.getInfoBill(id);
     }
 
     /**
@@ -57,13 +72,13 @@ public class Invoice extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDishOrder = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnExport = new javax.swing.JButton();
         btnBack = new javax.swing.JButton();
         txtTotalPrice = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        tblDishOrder.setBackground(new java.awt.Color(204, 255, 204));
+        tblDishOrder.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tblDishOrder.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -76,12 +91,17 @@ public class Invoice extends javax.swing.JFrame {
 
         jButton1.setBackground(new java.awt.Color(170, 244, 231));
         jButton1.setText("Pay bill");
-
-        jButton2.setBackground(new java.awt.Color(170, 244, 231));
-        jButton2.setText("Export bill");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        btnExport.setBackground(new java.awt.Color(170, 244, 231));
+        btnExport.setText("Export bill");
+        btnExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportActionPerformed(evt);
             }
         });
 
@@ -105,7 +125,7 @@ public class Invoice extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
+                    .addComponent(btnExport, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
                     .addComponent(btnBack, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtTotalPrice))
                 .addContainerGap(15, Short.MAX_VALUE))
@@ -121,7 +141,7 @@ public class Invoice extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnExport, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(18, Short.MAX_VALUE))
@@ -134,9 +154,63 @@ public class Invoice extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnBackActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-       
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Choose file to save");
+
+        // Set default directory
+        fileChooser.setCurrentDirectory(new File("D:\\Learning-IT\\PROG191 - Java Programming\\DataOfBill"));
+
+        int userSelection = fileChooser.showSaveDialog(this);
+        if(userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+
+            // Append a timestamp to the file name to make it unique
+            String fileName = fileToSave.getName();
+            File fullPath = new File(fileToSave.getParentFile(), fileName);
+
+            try {
+                FileWriter fw = new FileWriter(fullPath);
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write("======== Bill ========\n");
+                bw.write("-- Date: " + dateOrder + "\n");
+                bw.write("-- Order ID: " + orderID + "\n");
+                bw.write("-- Name: " + customerName + "\n");
+                bw.write("-- Total: " + totalPrice + "\n");
+                bw.write("-- Status: " + (status ? "Paid" : "Unpaid") + "\n");
+                bw.write("======= Dishes =======\n");
+                for (int i = 0; i < tblDishOrder.getRowCount(); i++) {
+                    for (int j = 0; j < tblDishOrder.getColumnCount(); j++) {
+                        if (j != tblDishOrder.getColumnCount() - 1)
+                            bw.write(tblDishOrder.getValueAt(i, j).toString() + "-");
+                        else
+                            bw.write(tblDishOrder.getValueAt(i, j).toString());
+                    }
+                    bw.newLine();
+                }
+                bw.write("======================\n");
+                JOptionPane.showMessageDialog(this, "Export Successfully!");
+                bw.close();
+                fw.close();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Fail, try again!");
+            }
+        }
+    }//GEN-LAST:event_btnExportActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (txtTotalPrice.getText().equals("0")) 
+        {
+            JOptionPane.showMessageDialog(this, "You did not order anything!");
+            return;
+        }
+        
+        int choice = JOptionPane.showConfirmDialog(this, "Does the customer pay the bill!");
+
+        if (choice == 0) {
+            invoiceController.setBillStatus(orderID);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -166,23 +240,24 @@ public class Invoice extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Invoice().setVisible(true);
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new Invoice().setVisible(true);
+//            }
+//        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBack;
+    private javax.swing.JButton btnExport;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblDishOrder;
     private javax.swing.JTextField txtTotalPrice;
     // End of variables declaration//GEN-END:variables
 
     public void displayListOrderDishes(ArrayList<DishOrder> listOrderDishes) {
+        orderDishesTableModel.setRowCount(0);
         for (DishOrder model: listOrderDishes)
         {
             String formattedNumber = formatWithCommas(model.getTotalPrice());
@@ -193,6 +268,31 @@ public class Invoice extends javax.swing.JFrame {
                 formattedNumber
             });
         }
+        tblDishOrder.repaint();
+    }
+    
+    public void displayTotalMoney(double money) {
+        String formattedNumber = formatWithCommas(money);
+        txtTotalPrice.setText(formattedNumber);
+        totalPrice = formattedNumber;
+    }
+    
+    public void resultPayBill(int id) {
+        switch (id) 
+        {
+            case -1 -> JOptionPane.showMessageDialog(this, "There was an error, try again!");
+            case 0 -> JOptionPane.showMessageDialog(this, "You paid the bill!");
+            case 1 -> { 
+                JOptionPane.showMessageDialog(this, "Thank you for eating at our restaurant!");
+                this.dispose();
+            }
+        }
+    }
+    
+    public void returnInfoBill(Order model) {
+        customerName = model.getCustomerName();
+        status = model.isStatus();
+        dateOrder = model.getDateOrder();
     }
      
     public String formatWithCommas(double number) {
