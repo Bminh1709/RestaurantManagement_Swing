@@ -4,6 +4,9 @@
  */
 package Entity;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -13,26 +16,33 @@ import static org.junit.Assert.*;
  */
 public class OrderTest {
 
-    //Order newOrder = new Order(1, "Minh", false, df.parse("2023-08-18"), 20000);
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    Order newOrder;
     
     public OrderTest() {
+        try {
+            newOrder = new Order(1, "Minh", false, df.parse("2023-08-18"), 20000);
+            // Rest of your code
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
-    public void testGetId() {
-        System.out.println("getId");
-        Order instance = new Order();
-        int expResult = 0;
-        int result = instance.getId();
-        assertEquals(expResult, result);
-    }
-
-    @Test
-    public void testSetId() {
-        System.out.println("setId");
-        int id = 0;
-        Order instance = new Order();
-        instance.setId(id);
+    public void testGet() {
+        String formattedDate = df.format(newOrder.getDateOrder());
+        // Correct Order
+        assertEquals(1, newOrder.getId());
+        assertEquals("Minh", newOrder.getCustomerName());
+        assertEquals(false, newOrder.isStatus());
+        assertEquals("2023-08-18", formattedDate);
+        assertTrue(20000 == newOrder.getTotalPrice());
+        // Incorrect Order
+        assertFalse(3 == newOrder.getId());
+        assertFalse("Dung" == newOrder.getCustomerName());
+        assertFalse(true == newOrder.isStatus());
+        assertFalse("2024-09-18" == formattedDate);
+        assertFalse(50000 == newOrder.getTotalPrice());
     }
     
 }
