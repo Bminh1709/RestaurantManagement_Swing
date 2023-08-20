@@ -7,6 +7,7 @@ package View;
 import Controller.MenuController;
 import CustomEntity.DishDetail;
 import Entity.Category;
+import Helper.FormatPrice;
 import Model.MenuModel;
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -32,7 +33,8 @@ public class Menu extends javax.swing.JFrame {
     private MenuController menuController; // MenuController
     private MenuModel menuModel = new MenuModel(); // New MenuModel
     private DefaultTableModel dishTableModel; // Table Dish
-    public int selectedIndex; // Index when click on table
+    private int selectedIndex; // Index when click on table
+    private FormatPrice formatPrice;
             
     public Menu() {
         initComponents();
@@ -45,6 +47,7 @@ public class Menu extends javax.swing.JFrame {
         ImageIcon icon = new ImageIcon(getClass().getResource("/Assets/logo.png")); // Replace with the actual path
         setIconImage(icon.getImage());
         setTitle("BM Restaurant");
+        formatPrice = new FormatPrice();
         // Init the table models
         tblDish.setRowHeight(30);
         dishTableModel = (DefaultTableModel)tblDish.getModel();
@@ -101,7 +104,15 @@ public class Menu extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tblDish);
         if (tblDish.getColumnModel().getColumnCount() > 0) {
-            tblDish.getColumnModel().getColumn(0).setPreferredWidth(5);
+            tblDish.getColumnModel().getColumn(0).setMinWidth(30);
+            tblDish.getColumnModel().getColumn(0).setPreferredWidth(30);
+            tblDish.getColumnModel().getColumn(0).setMaxWidth(30);
+            tblDish.getColumnModel().getColumn(1).setMinWidth(120);
+            tblDish.getColumnModel().getColumn(1).setPreferredWidth(120);
+            tblDish.getColumnModel().getColumn(1).setMaxWidth(150);
+            tblDish.getColumnModel().getColumn(3).setMinWidth(130);
+            tblDish.getColumnModel().getColumn(3).setPreferredWidth(130);
+            tblDish.getColumnModel().getColumn(3).setMaxWidth(150);
         }
 
         cbbCategory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All" }));
@@ -191,6 +202,7 @@ public class Menu extends javax.swing.JFrame {
 
         jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setFont(new java.awt.Font("Bahnschrift", 1, 20)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 153, 153));
         jLabel1.setText("BM Restaurant");
 
         btnReload.setBackground(new java.awt.Color(170, 244, 231));
@@ -393,11 +405,11 @@ public class Menu extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Menu().setVisible(true);
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new Menu().setVisible(true);
+//            }
+//        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -440,15 +452,10 @@ public class Menu extends javax.swing.JFrame {
         dishTableModel.setRowCount(0);
         for (DishDetail model: dishes)
         {
-            String formattedNumber = formatWithCommas(model.getPrice());
+            String formattedNumber = formatPrice.formatWithCommas(model.getPrice());
             dishTableModel.addRow(new Object[] {
                 tblDish.getRowCount()+1,model.getCategory(),model.getDish(),formattedNumber
             });
         }
-    }
-    
-    public String formatWithCommas(double number) {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        return numberFormat.format(number);
     }
 }

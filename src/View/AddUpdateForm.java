@@ -6,12 +6,11 @@ package View;
 
 import Controller.AddUpdateDishController;
 import Entity.Category;
+import Helper.FormatPrice;
 import Model.AddUpdateModel;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -27,6 +26,7 @@ public class AddUpdateForm extends javax.swing.JFrame {
     private AddUpdateDishController addUpdateController;
     private boolean updateRequest = false;
     private int dishId;
+    private FormatPrice formatPrice;
     
     public AddUpdateForm() {
         initComponents();
@@ -40,6 +40,7 @@ public class AddUpdateForm extends javax.swing.JFrame {
         ImageIcon icon = new ImageIcon(getClass().getResource("/Assets/logo.png")); // Replace with the actual path
         setIconImage(icon.getImage());
         setTitle("BM Restaurant");
+        formatPrice = new FormatPrice();
         
         addUpdateController = new AddUpdateDishController(addUpdateModel, this);
         addUpdateController.loadCategories();
@@ -57,6 +58,7 @@ public class AddUpdateForm extends javax.swing.JFrame {
         ImageIcon icon = new ImageIcon(getClass().getResource("/Assets/logo.png")); // Replace with the actual path
         setIconImage(icon.getImage());
         setTitle("BM Restaurant");
+        formatPrice = new FormatPrice();
         
         addUpdateController = new AddUpdateDishController(addUpdateModel, this);
         addUpdateController.loadCategories();
@@ -64,7 +66,7 @@ public class AddUpdateForm extends javax.swing.JFrame {
         // Set selected category in the combo box
         setCategoryComboBox(cat);
         txtName.setText(name);
-        String formattedNumber = formatWithCommas(price);
+        String formattedNumber = formatPrice.formatWithCommas(price);
         txtPrice.setText(String.valueOf(formattedNumber));
         
         // Set updateRequest = true ==> use the same form for both adđ and update
@@ -244,11 +246,11 @@ public class AddUpdateForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new AddUpdateForm().setVisible(true);
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new AddUpdateForm().setVisible(true);
+//            }
+//        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -261,11 +263,6 @@ public class AddUpdateForm extends javax.swing.JFrame {
     private javax.swing.JTextField txtPrice;
     // End of variables declaration//GEN-END:variables
 
-    private String formatWithCommas(double number) {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        return numberFormat.format(number);
-    }
-    
     private void setCategoryComboBox(String selectedCategory) {
         for (int i = 0; i < cbbCategory.getItemCount(); i++) {
         String item = cbbCategory.getItemAt(i);
