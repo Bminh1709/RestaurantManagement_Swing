@@ -7,15 +7,14 @@ package View;
 import Controller.InvoiceController;
 import CustomEntity.DishOrder;
 import Entity.Order;
+import Helper.FormatPrice;
 import Model.InvoiceModel;
 import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -31,12 +30,13 @@ public class Invoice extends javax.swing.JFrame {
     // DECLARATION
     private InvoiceController invoiceController;
     private InvoiceModel invoiceModel = new InvoiceModel();
-    private DefaultTableModel orderDishesTableModel;
+    private DefaultTableModel orderDishModel;
     private int orderID;
     private String customerName;
     private boolean status;
     private Date dateOrder;
     private String totalPrice;
+    private FormatPrice formatPrice;
     
     public Invoice(int id) {
         initComponents();
@@ -50,8 +50,9 @@ public class Invoice extends javax.swing.JFrame {
         ImageIcon icon = new ImageIcon(getClass().getResource("/Assets/logo.png")); // Replace with the actual path
         setIconImage(icon.getImage());
         setTitle("BM Restaurant");
-        tblDishOrder.setRowMargin(30);
-        orderDishesTableModel = (DefaultTableModel)tblDishOrder.getModel();
+        formatPrice = new FormatPrice();
+        tblDishesOrder.setRowHeight(30);
+        orderDishModel = (DefaultTableModel)tblDishesOrder.getModel();
         orderID = id;
         
         invoiceController = new InvoiceController(invoiceModel, this);
@@ -69,25 +70,14 @@ public class Invoice extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblDishOrder = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
         btnBack = new javax.swing.JButton();
         txtTotalPrice = new javax.swing.JTextField();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblDishesOrder = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        tblDishOrder.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        tblDishOrder.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "Name", "Quantity", "Price"
-            }
-        ));
-        jScrollPane1.setViewportView(tblDishOrder);
 
         jButton1.setBackground(new java.awt.Color(170, 244, 231));
         jButton1.setText("Pay bill");
@@ -115,34 +105,58 @@ public class Invoice extends javax.swing.JFrame {
 
         txtTotalPrice.setEditable(false);
 
+        tblDishesOrder.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "ID", "Name", "Quantity", "Price"
+            }
+        ));
+        jScrollPane2.setViewportView(tblDishesOrder);
+        if (tblDishesOrder.getColumnModel().getColumnCount() > 0) {
+            tblDishesOrder.getColumnModel().getColumn(0).setMinWidth(30);
+            tblDishesOrder.getColumnModel().getColumn(0).setPreferredWidth(30);
+            tblDishesOrder.getColumnModel().getColumn(0).setMaxWidth(100);
+            tblDishesOrder.getColumnModel().getColumn(2).setMinWidth(80);
+            tblDishesOrder.getColumnModel().getColumn(2).setPreferredWidth(80);
+            tblDishesOrder.getColumnModel().getColumn(2).setMaxWidth(100);
+            tblDishesOrder.getColumnModel().getColumn(3).setMinWidth(120);
+            tblDishesOrder.getColumnModel().getColumn(3).setPreferredWidth(120);
+            tblDishesOrder.getColumnModel().getColumn(3).setMaxWidth(150);
+        }
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addContainerGap(18, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtTotalPrice)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnExport, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
-                    .addComponent(btnBack, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtTotalPrice))
-                .addContainerGap(15, Short.MAX_VALUE))
+                    .addComponent(btnExport, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+                    .addComponent(btnBack, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(txtTotalPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnExport, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnExport, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(269, 269, 269)
                         .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(18, Short.MAX_VALUE))
         );
@@ -179,12 +193,12 @@ public class Invoice extends javax.swing.JFrame {
                 bw.write("-- Total: " + totalPrice + "\n");
                 bw.write("-- Status: " + (status ? "Paid" : "Unpaid") + "\n");
                 bw.write("======= Dishes =======\n");
-                for (int i = 0; i < tblDishOrder.getRowCount(); i++) {
-                    for (int j = 0; j < tblDishOrder.getColumnCount(); j++) {
-                        if (j != tblDishOrder.getColumnCount() - 1)
-                            bw.write(tblDishOrder.getValueAt(i, j).toString() + "-");
+                for (int i = 0; i < tblDishesOrder.getRowCount(); i++) {
+                    for (int j = 0; j < tblDishesOrder.getColumnCount(); j++) {
+                        if (j != tblDishesOrder.getColumnCount() - 1)
+                            bw.write(tblDishesOrder.getValueAt(i, j).toString() + "-");
                         else
-                            bw.write(tblDishOrder.getValueAt(i, j).toString());
+                            bw.write(tblDishesOrder.getValueAt(i, j).toString());
                     }
                     bw.newLine();
                 }
@@ -251,28 +265,27 @@ public class Invoice extends javax.swing.JFrame {
     private javax.swing.JButton btnBack;
     private javax.swing.JButton btnExport;
     private javax.swing.JButton jButton1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblDishOrder;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable tblDishesOrder;
     private javax.swing.JTextField txtTotalPrice;
     // End of variables declaration//GEN-END:variables
 
     public void displayListOrderDishes(ArrayList<DishOrder> listOrderDishes) {
-        orderDishesTableModel.setRowCount(0);
+        orderDishModel.setRowCount(0);
         for (DishOrder model: listOrderDishes)
         {
-            String formattedNumber = formatWithCommas(model.getTotalPrice());
-            orderDishesTableModel.addRow(new Object[] {
-                tblDishOrder.getRowCount()+1, 
+            String formattedNumber = formatPrice.formatWithCommas(model.getTotalPrice());
+            orderDishModel.addRow(new Object[] {
+                tblDishesOrder.getRowCount()+1, 
                 model.getName(),
                 model.getQuantity(),
                 formattedNumber
             });
         }
-        tblDishOrder.repaint();
     }
     
     public void displayTotalMoney(double money) {
-        String formattedNumber = formatWithCommas(money);
+        String formattedNumber = formatPrice.formatWithCommas(money);
         txtTotalPrice.setText(formattedNumber);
         totalPrice = formattedNumber;
     }
@@ -294,10 +307,4 @@ public class Invoice extends javax.swing.JFrame {
         status = model.isStatus();
         dateOrder = model.getDateOrder();
     }
-     
-    public String formatWithCommas(double number) {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        return numberFormat.format(number);
-    }
-
 }

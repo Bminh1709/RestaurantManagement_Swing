@@ -8,6 +8,7 @@ import Controller.AddDishOrderController;
 import Entity.Category;
 import Entity.Dish;
 import Entity.Order;
+import Helper.FormatPrice;
 import Model.TableModel;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
@@ -36,6 +37,7 @@ public class AddDishOrderForm extends javax.swing.JFrame {
     private double originalPrice;
     private int orderID = 0;
     private int dishID;
+    private FormatPrice formatPrice;
     
     //public AddDishOrderForm() {}
         
@@ -51,7 +53,7 @@ public class AddDishOrderForm extends javax.swing.JFrame {
         ImageIcon icon = new ImageIcon(getClass().getResource("/Assets/logo.png")); // Replace with the actual path
         setIconImage(icon.getImage());
         setTitle("BM Restaurant");
-        
+        formatPrice = new FormatPrice();
         // Set Jspinner cannot edit
         JFormattedTextField editor = ((JSpinner.DefaultEditor) spQuantity.getEditor()).getTextField();
         editor.setEditable(false);
@@ -230,7 +232,7 @@ public class AddDishOrderForm extends javax.swing.JFrame {
                // Find the corresponding Dish object in the list
                for (Dish model : listDishs) {
                    if (model.getName().equals(selectedName) && model.getCategoryId() == tmpCategoryID) {
-                       txtPrice.setText(formatWithCommas(model.getPrice()));
+                       txtPrice.setText(formatPrice.formatWithCommas(model.getPrice()));
                        originalPrice = model.getPrice();
                        dishID = model.getId();
                        break;
@@ -243,7 +245,7 @@ public class AddDishOrderForm extends javax.swing.JFrame {
         int quantity = Integer.parseInt(String.valueOf(spQuantity.getValue()));
         Double modifiedPrice = originalPrice * quantity;
         
-        txtPrice.setText(formatWithCommas(modifiedPrice));
+        txtPrice.setText(formatPrice.formatWithCommas(modifiedPrice));
     }//GEN-LAST:event_spQuantityStateChanged
 
     /**
@@ -320,11 +322,6 @@ public class AddDishOrderForm extends javax.swing.JFrame {
         {
             JOptionPane.showMessageDialog(this, "Fail, try again!");
         }
-    }
-    
-    public String formatWithCommas(double number) {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        return numberFormat.format(number);
     }
     
     public void updateTotalPriceForOrder() {

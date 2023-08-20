@@ -6,6 +6,7 @@ package View;
 
 import Controller.TableController;
 import Entity.Order;
+import Helper.FormatPrice;
 import Model.TableModel;
 import java.awt.Color;
 import java.text.NumberFormat;
@@ -28,7 +29,8 @@ public class TableManagement extends javax.swing.JFrame {
     private TableModel tableModel = new TableModel();
     private DefaultTableModel orderTableModel;
     private List<Order> tmpOrders;
-    public int selectedIndex;
+    private int selectedIndex;
+    private FormatPrice formatPrice;
     
     
     public TableManagement() {
@@ -42,6 +44,7 @@ public class TableManagement extends javax.swing.JFrame {
         ImageIcon icon = new ImageIcon(getClass().getResource("/Assets/logo.png")); // Replace with the actual path
         setIconImage(icon.getImage());
         setTitle("BM Restaurant");
+        formatPrice = new FormatPrice();
         tblOrder.setRowHeight(30);
         orderTableModel = (DefaultTableModel)tblOrder.getModel();
         
@@ -387,11 +390,11 @@ public class TableManagement extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new TableManagement().setVisible(true);
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new TableManagement().setVisible(true);
+//            }
+//        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -416,7 +419,7 @@ public class TableManagement extends javax.swing.JFrame {
         orderTableModel.setRowCount(0);
         for (Order model: orders)
         {
-            String formattedNumber = formatWithCommas(model.getTotalPrice());
+            String formattedNumber = formatPrice.formatWithCommas(model.getTotalPrice());
             orderTableModel.addRow(new Object[] {
                 tblOrder.getRowCount()+1, 
                 model.getCustomerName(), 
@@ -436,11 +439,6 @@ public class TableManagement extends javax.swing.JFrame {
         {
             JOptionPane.showMessageDialog(this, "Pay the bill first!");
         }
-    }
-    
-    public String formatWithCommas(double number) {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        return numberFormat.format(number);
     }
     
     public void updateTotalPriceForOrder(int id) {
