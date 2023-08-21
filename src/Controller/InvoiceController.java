@@ -6,6 +6,7 @@ package Controller;
 
 import CustomEntity.DishOrder;
 import Entity.Order;
+import Helper.DBException;
 import Model.InvoiceModel;
 import View.Invoice;
 import java.util.ArrayList;
@@ -24,32 +25,48 @@ public class InvoiceController {
         this.invoiceView = invoiceView;
     }
     
-    public void getListOrderDishes(int id) {
-        ArrayList<DishOrder> listOrderDishes = invoiceModel.getListOrderDishes(id);
-        invoiceView.displayListOrderDishes(listOrderDishes);
-    }
-    
-    public void getTotalMoney(int id) {
-        double money = invoiceModel.getTotalMoney(id);
-        invoiceView.displayTotalMoney(money);
-    }
-    
-    public void setBillStatus(int id) {
-        boolean checkBillStatus = invoiceModel.checkBillStatus(id);
-        if (checkBillStatus) {
-            boolean checkPayBill = invoiceModel.setBillStatus(id);
-            if (checkPayBill)
-                invoiceView.resultPayBill(1);
-            else
-                invoiceView.resultPayBill(-1);
-        }
-        else {
-            invoiceView.resultPayBill(0);
+    public void getListOrderDishes(int id) throws DBException {
+        try {
+            ArrayList<DishOrder> listOrderDishes = invoiceModel.getListOrderDishes(id);
+            invoiceView.displayListOrderDishes(listOrderDishes);
+        } catch (DBException dbException) {
+            invoiceView.Error("An error occurred: " + dbException.getMessage());
         }
     }
     
-    public void getInfoBill(int id) {
-        Order currentOrder = invoiceModel.getInfoBill(id);
-        invoiceView.returnInfoBill(currentOrder);
+    public void getTotalMoney(int id) throws DBException {
+        try {
+            double money = invoiceModel.getTotalMoney(id);
+            invoiceView.displayTotalMoney(money);
+        } catch (DBException dbException) {
+            invoiceView.Error("An error occurred: " + dbException.getMessage());
+        }
+    }
+    
+    public void setBillStatus(int id) throws DBException {
+        try {
+            boolean checkBillStatus = invoiceModel.checkBillStatus(id);
+            if (checkBillStatus) {
+                boolean checkPayBill = invoiceModel.setBillStatus(id);
+                if (checkPayBill)
+                    invoiceView.resultPayBill(1);
+                else
+                    invoiceView.resultPayBill(-1);
+            }
+            else {
+                invoiceView.resultPayBill(0);
+            }
+        } catch (DBException dbException) {
+            invoiceView.Error("An error occurred: " + dbException.getMessage());
+        }
+    }
+    
+    public void getInfoBill(int id) throws DBException {
+        try {
+            Order currentOrder = invoiceModel.getInfoBill(id);
+            invoiceView.returnInfoBill(currentOrder);
+        } catch (DBException dbException) {
+            invoiceView.Error("An error occurred: " + dbException.getMessage());
+        }
     }
 }

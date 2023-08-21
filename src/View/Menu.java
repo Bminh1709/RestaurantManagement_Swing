@@ -7,6 +7,7 @@ package View;
 import Controller.MenuController;
 import CustomEntity.DishDetail;
 import Entity.Category;
+import Helper.DBException;
 import Helper.FormatPrice;
 import Model.MenuModel;
 import java.awt.Color;
@@ -17,6 +18,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -36,7 +39,7 @@ public class Menu extends javax.swing.JFrame {
     private int selectedIndex; // Index when click on table
     private FormatPrice formatPrice;
             
-    public Menu() {
+    public Menu() throws DBException {
         initComponents();
         // Center the views
         this.setLocationRelativeTo(null);
@@ -286,11 +289,19 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-        menuController.searchDishes(String.valueOf(cbbCategory.getSelectedItem()), txtFilter.getText());
+        try {
+            menuController.searchDishes(String.valueOf(cbbCategory.getSelectedItem()), txtFilter.getText());
+        } catch (DBException ex) {
+            JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        new AddUpdateForm().setVisible(true);
+        try {
+            new AddUpdateForm().setVisible(true);
+        } catch (DBException ex) {
+            JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -306,7 +317,11 @@ public class Menu extends javax.swing.JFrame {
             {
                 // selectedIndex = tblDish.getSelectedRow();
                 DishDetail model = tmpDishes.get(selectedIndex);
-                menuController.deleteDish(model.getDishID()); 
+                try { 
+                    menuController.deleteDish(model.getDishID());
+                } catch (DBException ex) {
+                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
@@ -320,12 +335,20 @@ public class Menu extends javax.swing.JFrame {
         else
         {
             DishDetail model = tmpDishes.get(selectedIndex);
-            new AddUpdateForm(model.getDishID(), model.getCategory(), model.getDish(), model.getPrice()).setVisible(true);
+            try {
+                new AddUpdateForm(model.getDishID(), model.getCategory(), model.getDish(), model.getPrice()).setVisible(true);
+            } catch (DBException ex) {
+                JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReloadActionPerformed
-        menuController.loadDishes();
+        try {
+            menuController.loadDishes();
+        } catch (DBException ex) {
+            JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnReloadActionPerformed
 
     private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
@@ -407,7 +430,11 @@ public class Menu extends javax.swing.JFrame {
         /* Create and display the form */
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            public void run() {
-//                new Menu().setVisible(true);
+//                try {
+//                    new Menu().setVisible(true);
+//                } catch (DBException ex) {
+//                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+//                }
 //            }
 //        });
     }
@@ -429,7 +456,7 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JTextField txtFilter;
     // End of variables declaration//GEN-END:variables
 
-    public void resultDeleteDish(boolean result) {
+    public void resultDeleteDish(boolean result) throws DBException {
         if (result == true) {
             JOptionPane.showMessageDialog(this, "Delete the dish successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             menuController.loadDishes();
@@ -457,5 +484,9 @@ public class Menu extends javax.swing.JFrame {
                 tblDish.getRowCount()+1,model.getCategory(),model.getDish(),formattedNumber
             });
         }
+    }
+    
+    public void Error(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Sign In Failed", JOptionPane.ERROR_MESSAGE);
     }
 }

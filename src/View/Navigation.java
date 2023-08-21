@@ -4,7 +4,10 @@
  */
 package View;
 
+import Helper.DBException;
 import java.awt.Color;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -139,7 +142,11 @@ public class Navigation extends javax.swing.JFrame {
 
     private void btnTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTableActionPerformed
         this.dispose();
-        new TableManagement().setVisible(true);
+        try {
+            new TableManagement().setVisible(true);
+        } catch (DBException ex) {
+            JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnTableActionPerformed
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
@@ -151,7 +158,11 @@ public class Navigation extends javax.swing.JFrame {
 
     private void btnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuActionPerformed
         this.dispose();
-        new Menu().setVisible(true);
+        try {
+            new Menu().setVisible(true);
+        } catch (DBException ex) {
+            JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnMenuActionPerformed
 
     /**

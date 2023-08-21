@@ -7,6 +7,7 @@ package View;
 import Controller.InvoiceController;
 import CustomEntity.DishOrder;
 import Entity.Order;
+import Helper.DBException;
 import Helper.FormatPrice;
 import Model.InvoiceModel;
 import java.awt.Color;
@@ -15,6 +16,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -38,7 +41,7 @@ public class Invoice extends javax.swing.JFrame {
     private String totalPrice;
     private FormatPrice formatPrice;
     
-    public Invoice(int id) {
+    public Invoice(int id) throws DBException {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Center the views
@@ -70,7 +73,7 @@ public class Invoice extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        btnPayBill = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
         btnBack = new javax.swing.JButton();
         txtTotalPrice = new javax.swing.JTextField();
@@ -79,11 +82,11 @@ public class Invoice extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setBackground(new java.awt.Color(170, 244, 231));
-        jButton1.setText("Pay bill");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnPayBill.setBackground(new java.awt.Color(170, 244, 231));
+        btnPayBill.setText("Pay bill");
+        btnPayBill.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnPayBillActionPerformed(evt);
             }
         });
 
@@ -139,7 +142,7 @@ public class Invoice extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtTotalPrice)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnPayBill, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnExport, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                     .addComponent(btnBack, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(13, Short.MAX_VALUE))
@@ -153,7 +156,7 @@ public class Invoice extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(txtTotalPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnPayBill, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnExport, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(269, 269, 269)
@@ -212,7 +215,7 @@ public class Invoice extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnExportActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnPayBillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPayBillActionPerformed
         if (txtTotalPrice.getText().equals("0")) 
         {
             JOptionPane.showMessageDialog(this, "You did not order anything!");
@@ -222,9 +225,13 @@ public class Invoice extends javax.swing.JFrame {
         int choice = JOptionPane.showConfirmDialog(this, "Does the customer pay the bill!");
 
         if (choice == 0) {
-            invoiceController.setBillStatus(orderID);
+            try {
+                invoiceController.setBillStatus(orderID);
+            } catch (DBException ex) {
+                JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnPayBillActionPerformed
 
     /**
      * @param args the command line arguments
@@ -264,7 +271,7 @@ public class Invoice extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBack;
     private javax.swing.JButton btnExport;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnPayBill;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblDishesOrder;
     private javax.swing.JTextField txtTotalPrice;
@@ -306,5 +313,9 @@ public class Invoice extends javax.swing.JFrame {
         customerName = model.getCustomerName();
         status = model.isStatus();
         dateOrder = model.getDateOrder();
+    }
+    
+    public void Error(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

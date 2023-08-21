@@ -7,8 +7,11 @@ package Model;
 import Core.DB;
 import CustomEntity.DishOrder;
 import Entity.Order;
+import Helper.DBException;
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -17,7 +20,7 @@ import java.util.ArrayList;
  */
 public class InvoiceModel extends DB {
     
-    public ArrayList<DishOrder> getListOrderDishes(int id) {
+    public ArrayList<DishOrder> getListOrderDishes(int id) throws DBException {
         // Create list DishDetail
         ArrayList<DishOrder> list = new ArrayList<>();
         String sql = "SELECT D.id, DI.name, D.quantity, D.priceDish FROM detail D "
@@ -37,13 +40,18 @@ public class InvoiceModel extends DB {
                 model.setTotalPrice(rs.getDouble("priceDish"));
                 list.add(model);
             }
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DBException("There was a error, try again!");
         }
         return list;
     }
     
-    public double getTotalMoney(int id) {
+    public double getTotalMoney(int id) throws DBException {
         double totalPrice = 0.0; // default value
         String sql = "SELECT SUM(priceDish) FROM detail WHERE idOrder = ?";
         try {
@@ -54,13 +62,18 @@ public class InvoiceModel extends DB {
             if (rs.next()) {
                 totalPrice = rs.getDouble(1); // Get the value from the first column
             }
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DBException("There was a error, try again!");
         }
         return totalPrice;
     }
     
-    public boolean checkBillStatus(int id) {
+    public boolean checkBillStatus(int id) throws DBException {
         String sql = "SELECT * FROM `orders` WHERE id = ? AND status = false";
         try {
             PreparedStatement ps = conn.prepareCall(sql);
@@ -70,13 +83,17 @@ public class InvoiceModel extends DB {
 
             // if status = false => return true
             return rs.next();
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new DBException("There was a error, try again!");
         }
     }
     
-    public boolean setBillStatus(int id) {
+    public boolean setBillStatus(int id) throws DBException {
         String sql = "UPDATE `orders` SET`status`= true WHERE id = ?";
         try {
             PreparedStatement ps = conn.prepareCall(sql);
@@ -86,13 +103,17 @@ public class InvoiceModel extends DB {
 
             // if status is set to true => return true
             return rowsAffected > 0;
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new DBException("There was a error, try again!");
         }
     }
     
-    public Order getInfoBill(int id) {
+    public Order getInfoBill(int id) throws DBException {
         // Create list DishDetail
         Order model = new Order();
         String sql = "SELECT * FROM orders WHERE id = ?";
@@ -107,8 +128,13 @@ public class InvoiceModel extends DB {
                 model.setStatus(rs.getBoolean("status"));
                 model.setDateOrder(rs.getDate("dateOrder"));
             }
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DBException("There was a error, try again!");
         }
         return model;
     }

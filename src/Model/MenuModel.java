@@ -7,8 +7,11 @@ package Model;
 import Core.DB;
 import CustomEntity.DishDetail;
 import Entity.Category;
+import Helper.DBException;
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +19,11 @@ import java.util.List;
  * @author MINH
  */
 public class MenuModel extends DB{
+
+    public MenuModel() throws DBException{
+    }
     
-    public ArrayList<DishDetail> getListDish() {
+    public ArrayList<DishDetail> getListDish() throws DBException {
         // Create list DishDetail
         ArrayList<DishDetail> list = new ArrayList<>();
         String sql = "SELECT d.id, c.nameCategory, d.name, d.price FROM dish d LEFT JOIN category c on d.catogoryId = c.id";
@@ -33,13 +39,18 @@ public class MenuModel extends DB{
                 model.setPrice(rs.getDouble("price"));
                 list.add(model);
             }
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DBException("There was a error, try again!");
         }
         return list;
     }
     
-    public List<Category> getListCategory() {
+    public List<Category> getListCategory() throws DBException {
         List<Category> list = new ArrayList<>();
         String sql = "SELECT * FROM category";
         try {
@@ -52,13 +63,18 @@ public class MenuModel extends DB{
                 model.setName(rs.getString("nameCategory"));
                 list.add(model);
             }
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DBException("There was a error, try again!");
         }
         return list;
     }
     
-    public ArrayList<DishDetail> getListFilterDish(String category, String filter) {
+    public ArrayList<DishDetail> getListFilterDish(String category, String filter) throws DBException {
         ArrayList<DishDetail> list = new ArrayList<>();
         String sql;
         if (category.equals("All")) {
@@ -90,13 +106,18 @@ public class MenuModel extends DB{
                 model.setPrice(rs.getDouble("price"));
                 list.add(model);
             }
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DBException("There was a error, try again!");
         }
         return list;
     }
     
-    public boolean deleteDish(int id) {
+    public boolean deleteDish(int id) throws DBException {
         String sql = "DELETE FROM dish WHERE id = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -107,13 +128,17 @@ public class MenuModel extends DB{
 
             // Check if any rows were affected (deleted)
             return rowsAffected > 0;
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new DBException("There was a error, try again!");
         }
     }
 
-    public boolean checkDishExist(int idCat, String name) {
+    public boolean checkDishExist(int idCat, String name) throws DBException {
         String sql = "SELECT * FROM `dish` WHERE catogoryId = ? AND name = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -124,13 +149,17 @@ public class MenuModel extends DB{
 
             // Check if is there any rows (check if Dish already existed)
             return rs.next();
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new DBException("There was a error, try again!");
         }
     }
     
-    public boolean addDish(int idCat, String name, double price) {
+    public boolean addDish(int idCat, String name, double price) throws DBException {
         String sql = "INSERT INTO `dish`(`id`, `catogoryId`, `name`, `price`) VALUES (NULL,?,?,?)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -143,9 +172,13 @@ public class MenuModel extends DB{
 
             // Check if any rows were affected (deleted)
             return rowsAffected > 0;
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new DBException("There was a error, try again!");
         }
     }
 

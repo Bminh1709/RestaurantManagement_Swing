@@ -6,6 +6,7 @@ package View;
 
 import Controller.TableController;
 import Entity.Order;
+import Helper.DBException;
 import Helper.FormatPrice;
 import Model.TableModel;
 import java.awt.Color;
@@ -14,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -33,7 +36,7 @@ public class TableManagement extends javax.swing.JFrame {
     private FormatPrice formatPrice;
     
     
-    public TableManagement() {
+    public TableManagement() throws DBException {
         initComponents();
         // Center the views
         this.setLocationRelativeTo(null);
@@ -308,8 +311,12 @@ public class TableManagement extends javax.swing.JFrame {
         }
         else
         {
-            tableController.addTable(customerName);
-            tableController.loadListOrders();
+            try {
+                tableController.addTable(customerName);
+                tableController.loadListOrders();
+            } catch (DBException ex) {
+                JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_btnAddTableActionPerformed
 
@@ -329,9 +336,17 @@ public class TableManagement extends javax.swing.JFrame {
 
         if (choice == 0) {
             if (model.getTotalPrice() <= 0) {
-                tableController.deleteEmptyOrder(model.getId());
+                try {
+                    tableController.deleteEmptyOrder(model.getId());
+                } catch (DBException ex) {
+                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                tableController.deleteOrder(model.getId()); 
+                try { 
+                    tableController.deleteOrder(model.getId());
+                } catch (DBException ex) {
+                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
@@ -344,7 +359,11 @@ public class TableManagement extends javax.swing.JFrame {
             return;
         }
         Order model = tmpOrders.get(selectedIndex);
-        new Invoice(model.getId()).setVisible(true);
+        try {
+            new Invoice(model.getId()).setVisible(true);
+        } catch (DBException ex) {
+            JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnInvoiceActionPerformed
 
     private void btnAddDishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDishActionPerformed
@@ -355,11 +374,19 @@ public class TableManagement extends javax.swing.JFrame {
             return;
         }
         Order model = tmpOrders.get(selectedIndex);
-        new AddDishOrderForm(model.getId()).setVisible(true);
+        try {
+            new AddDishOrderForm(model.getId()).setVisible(true);
+        } catch (DBException ex) {
+            JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnAddDishActionPerformed
 
     private void btnReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReloadActionPerformed
-        tableController.loadListOrders();
+        try {
+            tableController.loadListOrders();
+        } catch (DBException ex) {
+            JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnReloadActionPerformed
 
     /**
@@ -392,7 +419,11 @@ public class TableManagement extends javax.swing.JFrame {
         /* Create and display the form */
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            public void run() {
-//                new TableManagement().setVisible(true);
+//                try {
+//                    new TableManagement().setVisible(true);
+//                } catch (DBException ex) {
+//                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+//                }
 //            }
 //        });
     }
@@ -430,7 +461,7 @@ public class TableManagement extends javax.swing.JFrame {
         }
     }
     
-    public void resultDeleteOrder(boolean result) {
+    public void resultDeleteOrder(boolean result) throws DBException {
         if (result == true) {
             JOptionPane.showMessageDialog(this, "Delete this order successfully!");
             tableController.loadListOrders();
@@ -441,8 +472,12 @@ public class TableManagement extends javax.swing.JFrame {
         }
     }
     
-    public void updateTotalPriceForOrder(int id) {
+    public void updateTotalPriceForOrder(int id) throws DBException {
         tableController.setTotalPrice(id);
+    }
+    
+    public void Error(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
     
 }
