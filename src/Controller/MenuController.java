@@ -7,6 +7,7 @@ package Controller;
 import Core.DB;
 import CustomEntity.DishDetail;
 import Entity.Category;
+import Helper.DBException;
 import Model.MenuModel;
 import View.Menu;
 import java.util.ArrayList;
@@ -25,29 +26,41 @@ public class MenuController extends DB{
         this.menuView = menuView;
     }
 
-    public void loadDishes() {
-        // Call getListDish() method from MenuModel to get the list of dishes
-        ArrayList<DishDetail> dishes = menuModel.getListDish();
-        // Pass the list of dishes to view and display them
-        menuView.displayDishes(dishes);
+    public void loadDishes() throws DBException {
+        try {
+            // Call getListDish() method from MenuModel to get the list of dishes
+            ArrayList<DishDetail> dishes = menuModel.getListDish();
+            // Pass the list of dishes to view and display them
+            menuView.displayDishes(dishes);
+        } catch (DBException dbException) {
+            menuView.Error("An error occurred: " + dbException.getMessage());
+        }
     }
     
-    public void loadCategories() {
-        List<Category> categories = menuModel.getListCategory();
-        menuView.displayCategories(categories);
+    public void loadCategories() throws DBException {
+        try {
+            List<Category> categories = menuModel.getListCategory();
+            menuView.displayCategories(categories);
+        } catch (DBException dbException) {
+            menuView.Error("An error occurred: " + dbException.getMessage());
+        }
     }
     
-    public void searchDishes(String category, String filter) {
-        ArrayList<DishDetail> filterDishes = menuModel.getListFilterDish(category, filter);
-        menuView.displayDishes(filterDishes);
+    public void searchDishes(String category, String filter) throws DBException {
+        try {
+            ArrayList<DishDetail> filterDishes = menuModel.getListFilterDish(category, filter);
+            menuView.displayDishes(filterDishes);
+        } catch (DBException dbException) {
+            menuView.Error("An error occurred: " + dbException.getMessage());
+        }
     }
     
-    public void deleteDish(int id) {
+    public void deleteDish(int id) throws DBException {
         Boolean checkDeleteDish = menuModel.deleteDish(id);
         menuView.resultDeleteDish(checkDeleteDish);
     } 
     
-    public boolean addDataToDB(int idCat, String name, double price) {
+    public boolean addDataToDB(int idCat, String name, double price) throws DBException {
         boolean checkDishExist = menuModel.checkDishExist(idCat, name);
         if (checkDishExist) {
             return false;
@@ -55,11 +68,7 @@ public class MenuController extends DB{
         else
         {
             boolean checkAddDish = menuModel.addDish(idCat, name, price);
-            if (checkAddDish) {
-                return true;
-            }
-            else
-                return false;
+            return checkAddDish;
         }
     }
 }

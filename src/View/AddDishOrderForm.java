@@ -7,16 +7,16 @@ package View;
 import Controller.AddDishOrderController;
 import Entity.Category;
 import Entity.Dish;
-import Entity.Order;
+import Helper.DBException;
 import Helper.FormatPrice;
 import Model.TableModel;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -41,7 +41,7 @@ public class AddDishOrderForm extends javax.swing.JFrame {
     
     //public AddDishOrderForm() {}
         
-    public AddDishOrderForm(int id) {
+    public AddDishOrderForm(int id) throws DBException {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Center the views
@@ -66,7 +66,11 @@ public class AddDishOrderForm extends javax.swing.JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                updateTotalPriceForOrder();
+                try {
+                    updateTotalPriceForOrder();
+                } catch (DBException ex) {
+                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
     }
@@ -212,7 +216,11 @@ public class AddDishOrderForm extends javax.swing.JFrame {
         // orderID
         int quantity = Integer.parseInt(String.valueOf(spQuantity.getValue())); // quantity
         Double modifiedPrice = originalPrice * quantity; // totalPrice
-        addDishOrderController.addDishForOrder(dishID, orderID, quantity, modifiedPrice);
+        try {
+            addDishOrderController.addDishForOrder(dishID, orderID, quantity, modifiedPrice);
+        } catch (DBException ex) {
+            JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void cbbCategoryItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbbCategoryItemStateChanged
@@ -220,7 +228,11 @@ public class AddDishOrderForm extends javax.swing.JFrame {
             String[] parts = String.valueOf(cbbCategory.getSelectedItem()).split("-");
             String categoryId = parts[0].trim();
             tmpCategoryID = Integer.parseInt(categoryId);
-            addDishOrderController.loadDishes(Integer.parseInt(categoryId));
+            try {
+                addDishOrderController.loadDishes(Integer.parseInt(categoryId));
+            } catch (DBException ex) {
+                JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_cbbCategoryItemStateChanged
 
@@ -324,10 +336,13 @@ public class AddDishOrderForm extends javax.swing.JFrame {
         }
     }
     
-    public void updateTotalPriceForOrder() {
+    public void updateTotalPriceForOrder() throws DBException {
         TableManagement tableManagement = new TableManagement();
         tableManagement.updateTotalPriceForOrder(orderID);
     }
 
+    public void Error(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Sign In Failed", JOptionPane.ERROR_MESSAGE);
+    }
     
 }

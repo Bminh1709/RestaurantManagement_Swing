@@ -5,6 +5,7 @@
 package Controller;
 
 import Core.DB;
+import Helper.DBException;
 import Model.AccessModel;
 import View.SignIn;
 
@@ -12,22 +13,21 @@ import View.SignIn;
  *
  * @author MINH
  */
-public class AccessController extends DB{
+public class AccessController extends DB {
     private AccessModel accessModel;
     private SignIn signInView;
 
-    public AccessController(AccessModel accessModel, SignIn signInView) {
+    public AccessController(AccessModel accessModel, SignIn signInView) throws DBException {
         this.accessModel = accessModel;
         this.signInView = signInView;
     }
     
-    public boolean SignIn(String username, String password) {
-        boolean isAuthenticated = accessModel.authenticate(username, password);
-        if (isAuthenticated) {
-            return true;
-        } else {
-            return false;
+    public void SignIn(String username, String password) {
+        try {
+            boolean isAuthenticated = accessModel.authenticate(username, password);
+            signInView.resultAccess(isAuthenticated);
+        } catch (DBException dbException) {
+            signInView.Error("An error occurred: " + dbException.getMessage());
         }
     }
-    
 }

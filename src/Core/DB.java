@@ -4,6 +4,8 @@
  */
 package Core;
 
+import Helper.DBException;
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -18,15 +20,16 @@ public class DB {
         protected String user = "root";
         protected String password = "";
 
-        public DB() {
+        public DB() throws DBException  {
             try {
                 conn = DriverManager.getConnection(url, user, password);
             }
-            catch (SQLException  e) {
-                System.err.println("Failed to connect to the database: " + e.getMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("An error occurred while onnecting MySQL databse");
-            }
+            catch (CommunicationsException em) {
+                    throw new DBException("Cannot connect to the database, try again!");
+                } catch (SQLException sqlException) {
+                    throw new DBException("There was an error with the database!");
+                } catch (Exception e) {
+                    throw new DBException("There was a general error!");
+                }
         }
 }

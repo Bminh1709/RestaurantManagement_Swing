@@ -6,11 +6,14 @@ package View;
 
 import Controller.AddUpdateDishController;
 import Entity.Category;
+import Helper.DBException;
 import Helper.FormatPrice;
 import Model.AddUpdateModel;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -28,7 +31,7 @@ public class AddUpdateForm extends javax.swing.JFrame {
     private int dishId;
     private FormatPrice formatPrice;
     
-    public AddUpdateForm() {
+    public AddUpdateForm() throws DBException {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Center the views
@@ -46,7 +49,7 @@ public class AddUpdateForm extends javax.swing.JFrame {
         addUpdateController.loadCategories();
     }
     
-    public AddUpdateForm(int dishId, String cat, String name, double price) {
+    public AddUpdateForm(int dishId, String cat, String name, double price) throws DBException {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Center the views
@@ -200,6 +203,8 @@ public class AddUpdateForm extends javax.swing.JFrame {
                     addUpdateController.addDish(Integer.parseInt(category), name, price);
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Invalid price format. Please enter a valid number!", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (DBException ex) {
+                JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
         else
@@ -212,7 +217,7 @@ public class AddUpdateForm extends javax.swing.JFrame {
         String tmpPrice = txtPrice.getText();
 
         if (!Character.isDigit(c) && c != ',' && c != KeyEvent.VK_BACK_SPACE) {
-            evt.consume(); // prevent typing more
+            evt.consume(); // avoid typing more
         } else if (c == ',' && tmpPrice.contains(",")) {
             evt.consume();
         }
@@ -246,11 +251,15 @@ public class AddUpdateForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new AddUpdateForm().setVisible(true);
-//            }
-//        });
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    new AddUpdateForm().setVisible(true);
+                } catch (DBException ex) {
+                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -294,5 +303,9 @@ public class AddUpdateForm extends javax.swing.JFrame {
         {
             cbbCategory.addItem(model.getId() + " - " + model.getName());
         }
+    }
+    
+    public void Error(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Sign In Failed", JOptionPane.ERROR_MESSAGE);
     }
 }

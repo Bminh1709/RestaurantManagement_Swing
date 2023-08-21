@@ -5,29 +5,34 @@
 package Model;
 
 import Core.DB;
-import Entity.Admin;
+import Helper.DBException;
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  *
  * @author MINH
  */
-public class AccessModel extends DB{
+public class AccessModel extends DB {
 
-    public boolean authenticate(String username, String password) {
+    public boolean authenticate(String username, String password) throws DBException {
         String sql = "SELECT COUNT(*) FROM `admin` WHERE username = ? AND password = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
             ps.setString(2, password);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next() && rs.getInt(1) > 0; // Return true if admin found
-            }
+            ResultSet rs = ps.executeQuery();
+            return rs.next() && rs.getInt(1) > 0; // Return true if admin found
+            
+        } catch (CommunicationsException em) {
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
         } catch (Exception e) {
-            e.printStackTrace();
-            return false; // Return false if any error
+            throw new DBException("There was a error, try again!");
         }
     }
-    
 }

@@ -5,8 +5,11 @@
 package View;
 
 import Controller.AccessController;
+import Helper.DBException;
 import Model.AccessModel;
 import java.awt.Color;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -17,9 +20,10 @@ import javax.swing.JOptionPane;
 public class SignIn extends javax.swing.JFrame {
 
     // final: cannot change value when assigned its value
-    final AccessModel accessModel = new AccessModel();
+    private AccessController accessController;
+    private AccessModel accessModel;
 
-    public SignIn() {
+    public SignIn() throws DBException {
         initComponents();
         // Center the views
         this.setLocationRelativeTo(null);
@@ -31,6 +35,8 @@ public class SignIn extends javax.swing.JFrame {
         setIconImage(icon.getImage());
         setTitle("BM Restaurant");
 
+        accessModel = new AccessModel();
+        accessController = new AccessController(accessModel, this);
     }
 
     /**
@@ -146,14 +152,7 @@ public class SignIn extends javax.swing.JFrame {
         String password = new String(passwordChars);
 
         // Call method in controller
-        boolean checkSignin = new AccessController(accessModel, this).SignIn(username, password);
-
-        if (checkSignin) {
-            this.dispose();
-            new Navigation().setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(this, "Check Username and Password again!", "Sign In Failed", JOptionPane.ERROR_MESSAGE);
-        }
+        accessController.SignIn(username, password);
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void ckbShowPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbShowPassActionPerformed
@@ -197,7 +196,11 @@ public class SignIn extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SignIn().setVisible(true);
+                try {
+                    new SignIn().setVisible(true);
+                } catch (DBException ex) {
+                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Sign In Failed", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
     }
@@ -210,4 +213,18 @@ public class SignIn extends javax.swing.JFrame {
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
+
+    public void resultAccess(boolean result) {
+        if (result) {
+            this.dispose();
+            new Navigation().setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Check Username and Password again!", "Sign In Failed", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public void Error(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Sign In Failed", JOptionPane.ERROR_MESSAGE);
+    }
+
 }

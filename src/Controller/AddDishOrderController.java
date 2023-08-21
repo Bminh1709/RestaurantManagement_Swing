@@ -6,6 +6,7 @@ package Controller;
 
 import Entity.Category;
 import Entity.Dish;
+import Helper.DBException;
 import Model.TableModel;
 import View.AddDishOrderForm;
 import java.util.List;
@@ -23,19 +24,31 @@ public class AddDishOrderController {
         this.addDishOrderView = addDishView;
     }
 
-    public void loadCategories() {
-        List<Category> categories = tableModel.getListCategory();
-        addDishOrderView.displayCategories(categories);
+    public void loadCategories() throws DBException {
+        try {
+            List<Category> categories = tableModel.getListCategory();
+            addDishOrderView.displayCategories(categories);
+        } catch (DBException dbException) {
+            addDishOrderView.Error("An error occurred: " + dbException.getMessage());
+        }
     }
     
-    public void loadDishes(int id) {
-        List<Dish> dishes = tableModel.getListDishes(id);
-        addDishOrderView.displayDishes(dishes);
+    public void loadDishes(int id) throws DBException {
+        try {
+            List<Dish> dishes = tableModel.getListDishes(id);
+            addDishOrderView.displayDishes(dishes);
+        } catch (DBException dbException) {
+            addDishOrderView.Error("An error occurred: " + dbException.getMessage());
+        }
     }
     
-    public void addDishForOrder(int dishID, int orderID, int quantity, double modifiedPrice) {
-        boolean checkAddDishForOrder = tableModel.addDishForOrder(dishID, orderID, quantity, modifiedPrice);
-        addDishOrderView.resultAddDishForOrder(checkAddDishForOrder);
+    public void addDishForOrder(int dishID, int orderID, int quantity, double modifiedPrice) throws DBException {
+        try {
+            boolean checkAddDishForOrder = tableModel.addDishForOrder(dishID, orderID, quantity, modifiedPrice);
+            addDishOrderView.resultAddDishForOrder(checkAddDishForOrder);
+        } catch (DBException dbException) {
+            addDishOrderView.Error("An error occurred: " + dbException.getMessage());
+        }
     }
     
 }
