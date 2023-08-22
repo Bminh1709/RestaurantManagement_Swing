@@ -5,6 +5,7 @@
 package Controller;
 
 import Entity.Category;
+import Entity.Dish;
 import Helper.DBException;
 import Helper.NumberException;
 import Model.AddUpdateModel;
@@ -57,15 +58,22 @@ public class AddUpdateDishController {
         }
     }
     
-    public void updateDish(int idDish, int idCat, String name, double price) throws DBException, NumberException {
+    public void updateDish(int idDish, int idCat, String name, double price, String oldDishName) throws DBException, NumberException {
         try {
-            boolean checkUpdateDish = addUpdateModel.updateDish(idDish, idCat, name, price);
-            if (checkUpdateDish) {
-                // Return 1 if add success
-                addUpdateView.resultAddUpdateDish(1);
+            List<Dish> list = addUpdateModel.getListDishesExceptUpdateDish(idCat, oldDishName);
+            boolean checkCompareUpdateDishWExistDish = addUpdateModel.compareUpdateDishWCurrentDish(list, idCat, name);
+            if (checkCompareUpdateDishWExistDish) {
+                addUpdateView.resultAddUpdateDish(0);
             }
-            else
-                addUpdateView.resultAddUpdateDish(-1);
+            else {
+                boolean checkUpdateDish = addUpdateModel.updateDish(idDish, idCat, name, price);
+                if (checkUpdateDish) {
+                    // Return 1 if add success
+                    addUpdateView.resultAddUpdateDish(1);
+                }
+                else
+                    addUpdateView.resultAddUpdateDish(-1);
+            }   
         } catch (NumberFormatException | DBException ex) {
             addUpdateView.Error("An error occurred: " + ex.getMessage());
         }

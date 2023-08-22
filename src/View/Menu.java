@@ -14,12 +14,8 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -41,6 +37,7 @@ public class Menu extends javax.swing.JFrame {
             
     public Menu() throws DBException {
         initComponents();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         // Center the views
         this.setLocationRelativeTo(null);
         // Set background color
@@ -298,7 +295,7 @@ public class Menu extends javax.swing.JFrame {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         try {
-            new AddUpdateForm().setVisible(true);
+            new AddUpdateForm(this).setVisible(true);
         } catch (DBException ex) {
             JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -336,7 +333,7 @@ public class Menu extends javax.swing.JFrame {
         {
             DishDetail model = tmpDishes.get(selectedIndex);
             try {
-                new AddUpdateForm(model.getDishID(), model.getCategory(), model.getDish(), model.getPrice()).setVisible(true);
+                new AddUpdateForm(this, model.getDishID(), model.getCategory(), model.getDish(), model.getPrice()).setVisible(true);
             } catch (DBException ex) {
                 JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -387,6 +384,8 @@ public class Menu extends javax.swing.JFrame {
                 if (msg.length() <= 0 || msg.isEmpty())
                 {
                     JOptionPane.showMessageDialog(this, "Import file successfully!");
+                    menuController.loadDishes();
+                    menuController.loadCategories();
                 }
                 else
                 {
@@ -489,4 +488,9 @@ public class Menu extends javax.swing.JFrame {
     public void Error(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Sign In Failed", JOptionPane.ERROR_MESSAGE);
     }
+    
+    public void reloadTableDishes() throws DBException {
+        menuController.loadDishes();
+    }
+    
 }

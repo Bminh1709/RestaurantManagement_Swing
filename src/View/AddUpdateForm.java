@@ -8,10 +8,13 @@ import Controller.AddUpdateDishController;
 import Entity.Category;
 import Helper.DBException;
 import Helper.FormatPrice;
+import Helper.NumberException;
 import Model.AddUpdateModel;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -28,8 +31,10 @@ public class AddUpdateForm extends javax.swing.JFrame {
     private boolean updateRequest = false;
     private int dishId;
     private FormatPrice formatPrice;
+    private String oldDishName;
+    private Menu menu;
     
-    public AddUpdateForm() throws DBException {
+    public AddUpdateForm(Menu menu) throws DBException {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Center the views
@@ -45,9 +50,10 @@ public class AddUpdateForm extends javax.swing.JFrame {
         
         addUpdateController = new AddUpdateDishController(addUpdateModel, this);
         addUpdateController.loadCategories();
+        this.menu = menu;
     }
     
-    public AddUpdateForm(int dishId, String cat, String name, double price) throws DBException {
+    public AddUpdateForm(Menu menu, int dishId, String cat, String name, double price) throws DBException {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Center the views
@@ -73,6 +79,9 @@ public class AddUpdateForm extends javax.swing.JFrame {
         // Set updateRequest = true ==> use the same form for both adđ and update
         updateRequest = true;
         this.dishId = dishId;
+        
+        oldDishName = name;
+        this.menu = menu;
     }
 
     /**
@@ -93,6 +102,11 @@ public class AddUpdateForm extends javax.swing.JFrame {
         txtPrice = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -196,13 +210,13 @@ public class AddUpdateForm extends javax.swing.JFrame {
                 String[] parts = tmpCategory.split("-");
                 String category = parts[0].trim();
                 if (updateRequest == true)
-                    addUpdateController.updateDish(dishId, Integer.parseInt(category), name, price);
+                    addUpdateController.updateDish(dishId, Integer.parseInt(category), name, price, oldDishName);
                 else
                     addUpdateController.addDish(Integer.parseInt(category), name, price);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Invalid price format. Please enter a valid number!", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (DBException ex) {
                 JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (NumberException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid price format. Please enter a valid number!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
         else
@@ -220,6 +234,14 @@ public class AddUpdateForm extends javax.swing.JFrame {
             evt.consume();
         }
     }//GEN-LAST:event_txtPriceKeyTyped
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        try {
+            menu.reloadTableDishes();
+        } catch (DBException ex) {
+            JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_formWindowClosed
 
     /**
      * @param args the command line arguments
@@ -249,16 +271,17 @@ public class AddUpdateForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new AddUpdateForm().setVisible(true);
-                } catch (DBException ex) {
-                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                try {
+//                    new AddUpdateForm(Menu menu).setVisible(true);
+//                } catch (DBException ex) {
+//                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+//                }
+//            }
+//        });
     }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnUpsert;
