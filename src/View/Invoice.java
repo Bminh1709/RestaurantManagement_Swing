@@ -16,8 +16,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -40,8 +38,9 @@ public class Invoice extends javax.swing.JFrame {
     private Date dateOrder;
     private String totalPrice;
     private FormatPrice formatPrice;
+    private TableManagement tableManagement;
     
-    public Invoice(int id) throws DBException {
+    public Invoice(TableManagement tableManagement, int id) throws DBException {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Center the views
@@ -62,6 +61,7 @@ public class Invoice extends javax.swing.JFrame {
         invoiceController.getListOrderDishes(id);
         invoiceController.getTotalMoney(id);
         invoiceController.getInfoBill(id);
+        this.tableManagement = tableManagement;
     }
 
     /**
@@ -296,13 +296,14 @@ public class Invoice extends javax.swing.JFrame {
         totalPrice = formattedNumber;
     }
     
-    public void resultPayBill(int id) {
+    public void resultPayBill(int id) throws DBException {
         switch (id) 
         {
             case -1 -> JOptionPane.showMessageDialog(this, "There was an error, try again!");
             case 0 -> JOptionPane.showMessageDialog(this, "You paid the bill!");
             case 1 -> { 
                 JOptionPane.showMessageDialog(this, "Thank you for eating at our restaurant!");
+                tableManagement.reloadTable();
                 this.dispose();
             }
         }

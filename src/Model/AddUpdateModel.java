@@ -6,6 +6,7 @@ package Model;
 
 import Core.DB;
 import Entity.Category;
+import Entity.Dish;
 import Helper.DBException;
 import Helper.NumberException;
 import com.mysql.cj.jdbc.exceptions.CommunicationsException;
@@ -20,7 +21,7 @@ import java.util.List;
  * @author MINH
  */
 public class AddUpdateModel extends DB {
-
+    
     public AddUpdateModel() throws DBException {
     }
     
@@ -88,6 +89,51 @@ public class AddUpdateModel extends DB {
             throw new DBException("Cannot connect to the database, try again!");
         } catch (SQLException sqlException) {
             throw new DBException("There was an error with the database!");
+        } catch (Exception e) {
+            throw new DBException("There was a error, try again!");
+        }
+    }
+    
+    // Get list of dishes that does not contain the dish user is updating
+    public List<Dish> getListDishesExceptUpdateDish(int idCat, String oldname) throws DBException {
+        List<Dish> list = new ArrayList<>();
+        String sql = "SELECT * FROM `dish` EXCEPT (SELECT * FROM `dish` WHERE catogoryId = ? AND name = ?)";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, idCat);
+            ps.setString(2, oldname);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Dish model = new Dish();
+                model.setCategoryId(rs.getInt("catogoryId"));
+                model.setName(rs.getString("name"));
+                list.add(model);
+            }
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
+        } catch (Exception e) {
+            throw new DBException("There was a error, try again!");
+        }
+        return list;
+    }
+    
+    public boolean compareUpdateDishWCurrentDish(List<Dish> list, int idCat, String name) throws DBException {
+        try {
+            if (list.size() <= 0)
+            {
+                // Can update because unique idCat and nameDish
+                return false;
+            }
+            for (Dish model : list) {
+                if (model.getCategoryId() == idCat && model.getName().equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+            return false;
         } catch (Exception e) {
             throw new DBException("There was a error, try again!");
         }

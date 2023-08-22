@@ -15,8 +15,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -38,10 +36,11 @@ public class AddDishOrderForm extends javax.swing.JFrame {
     private int orderID = 0;
     private int dishID;
     private FormatPrice formatPrice;
+    private TableManagement tableManagement;
     
     //public AddDishOrderForm() {}
         
-    public AddDishOrderForm(int id) throws DBException {
+    public AddDishOrderForm(TableManagement tableManagement, int id) throws DBException {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Center the views
@@ -62,17 +61,8 @@ public class AddDishOrderForm extends javax.swing.JFrame {
         addDishOrderController.loadCategories();
         
         orderID = id;
-        
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                try {
-                    updateTotalPriceForOrder();
-                } catch (NumberFormatException | DBException ex) {
-                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
+        this.tableManagement = tableManagement;
+       
     }
     
 
@@ -325,9 +315,11 @@ public class AddDishOrderForm extends javax.swing.JFrame {
         }
     }
     
-    public void resultAddDishForOrder(boolean result) {
+    public void resultAddDishForOrder(boolean result) throws DBException {
         if (result == true) {
             JOptionPane.showMessageDialog(this, "Add the dish successfully!");
+            tableManagement.updateTotalPriceForOrder(orderID);
+            tableManagement.reloadTable();
             this.dispose();
         }
         else
@@ -336,11 +328,6 @@ public class AddDishOrderForm extends javax.swing.JFrame {
         }
     }
     
-    public void updateTotalPriceForOrder() throws DBException {
-        TableManagement tableManagement = new TableManagement();
-        tableManagement.updateTotalPriceForOrder(orderID);
-    }
-
     public void Error(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Sign In Failed", JOptionPane.ERROR_MESSAGE);
     }

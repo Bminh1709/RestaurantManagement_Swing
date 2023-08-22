@@ -360,7 +360,7 @@ public class TableManagement extends javax.swing.JFrame {
         }
         Order model = tmpOrders.get(selectedIndex);
         try {
-            new Invoice(model.getId()).setVisible(true);
+            new Invoice(this, model.getId()).setVisible(true);
         } catch (DBException ex) {
             JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -375,7 +375,7 @@ public class TableManagement extends javax.swing.JFrame {
         }
         Order model = tmpOrders.get(selectedIndex);
         try {
-            new AddDishOrderForm(model.getId()).setVisible(true);
+            new AddDishOrderForm(this, model.getId()).setVisible(true);
         } catch (DBException ex) {
             JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -480,4 +480,7 @@ public class TableManagement extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
     
+    public void reloadTable() throws DBException {
+        tableController.loadListOrders();
+    }
 }
