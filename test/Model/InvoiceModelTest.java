@@ -6,6 +6,7 @@ package Model;
 
 import CustomEntity.DishOrder;
 import Entity.Order;
+import Helper.DBException;
 import java.util.ArrayList;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -20,12 +21,12 @@ public class InvoiceModelTest {
     private InvoiceModel invoiceModel;
 
     @Before
-    public void setUp() {
+    public void setUp() throws DBException {
         invoiceModel = new InvoiceModel();
     }
 
     @Test
-    public void testGetListOrderDishes() {
+    public void testGetListOrderDishes() throws DBException {
         int orderId = 7; // Adjust the order ID based on your data
         ArrayList<DishOrder> dishOrders = invoiceModel.getListOrderDishes(orderId);
         assertNotNull(dishOrders);
@@ -33,14 +34,14 @@ public class InvoiceModelTest {
     }
 
     @Test
-    public void testGetTotalMoney() {
+    public void testGetTotalMoney() throws DBException {
         int orderId = 7; // Adjust the order ID based on your data
         double totalMoney = invoiceModel.getTotalMoney(orderId);
         assertTrue(totalMoney >= 0);
     }
 
     @Test
-    public void testCheckBillStatus() {
+    public void testCheckBillStatus() throws DBException {
         int orderId = 7; 
         boolean billStatus = invoiceModel.checkBillStatus(orderId);
         assertFalse(billStatus);
@@ -51,14 +52,14 @@ public class InvoiceModelTest {
     }
 
     @Test
-    public void testSetBillStatus() {
-        int orderId = 10; // Adjust the order ID based on your data
+    public void testSetBillStatus() throws DBException {
+        int orderId = 7; // Adjust the order ID based on your data
         boolean updatedStatus = invoiceModel.setBillStatus(orderId);
         assertTrue(updatedStatus);
     }
 
     @Test
-    public void testGetInfoBill() {
+    public void testGetInfoBill() throws DBException {
         int orderId = 7; // Adjust the order ID based on your data
         Order order = invoiceModel.getInfoBill(orderId);
         assertNotNull(order);

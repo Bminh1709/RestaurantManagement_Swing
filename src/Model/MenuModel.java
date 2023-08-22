@@ -131,8 +131,13 @@ public class MenuModel extends DB{
         } catch (CommunicationsException em) {
             System.out.println(em.getMessage());
             throw new DBException("Cannot connect to the database, try again!");
-        } catch (SQLException sqlException) {
-            throw new DBException("There was an error with the database!");
+        } catch (SQLException ex) {
+            if (ex.getErrorCode() == 1451) {
+                throw new DBException("This dish is ordered for a customer, cannot delete that!");
+            }
+            else {
+                throw new DBException("There was an error with the database!");
+            }
         } catch (Exception e) {
             throw new DBException("There was a error, try again!");
         }

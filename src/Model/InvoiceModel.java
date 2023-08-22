@@ -19,6 +19,9 @@ import java.util.ArrayList;
  * @author MINH
  */
 public class InvoiceModel extends DB {
+
+    public InvoiceModel() throws DBException {
+    }
     
     public ArrayList<DishOrder> getListOrderDishes(int id) throws DBException {
         // Create list DishDetail

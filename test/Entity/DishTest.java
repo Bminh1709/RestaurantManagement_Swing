@@ -18,11 +18,7 @@ public class DishTest {
     
     public DishTest() {
     }
-    
-    @Before
-    public void setUp() {
-    }
-
+   
     @Test
     public void testGet() {
         // Correct Dish
@@ -50,6 +46,4 @@ public class DishTest {
         assertFalse(instance.getName().equals("Salmon"));
         assertFalse(instance.getPrice() == 20000);
     } 
-
-    
 }

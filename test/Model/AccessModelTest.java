@@ -4,6 +4,7 @@
  */
 package Model;
 
+import Helper.DBException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -22,7 +23,7 @@ public class AccessModelTest {
     }
 
     @Test
-    public void testAuthenticate() {
+    public void testAuthenticate() throws DBException {
         AccessModel instance = new AccessModel();
 
         // Valid account
@@ -61,5 +62,4 @@ public class AccessModelTest {
             assertEquals(expResult, result);
         }
     }
-    
 }

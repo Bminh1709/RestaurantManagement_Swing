@@ -182,7 +182,6 @@ public class Invoice extends javax.swing.JFrame {
         if(userSelection == JFileChooser.APPROVE_OPTION) {
             File fileToSave = fileChooser.getSelectedFile();
 
-            // Append a timestamp to the file name to make it unique
             String fileName = fileToSave.getName();
             File fullPath = new File(fileToSave.getParentFile(), fileName);
 

@@ -7,6 +7,7 @@ package Model;
 import Core.DB;
 import Entity.Category;
 import Helper.DBException;
+import Helper.NumberException;
 import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +20,9 @@ import java.util.List;
  * @author MINH
  */
 public class AddUpdateModel extends DB {
+
+    public AddUpdateModel() throws DBException {
+    }
     
     public List<Category> getListCategory() throws DBException {
         List<Category> list = new ArrayList<>();
@@ -65,7 +69,7 @@ public class AddUpdateModel extends DB {
         }
     }
     
-    public boolean addDish(int idCat, String name, double price) throws DBException {
+    public boolean addDish(int idCat, String name, double price) throws DBException, NumberException {
         String sql = "INSERT INTO `dish`(`id`, `catogoryId`, `name`, `price`) VALUES (NULL,?,?,?)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -73,13 +77,14 @@ public class AddUpdateModel extends DB {
             ps.setString(2, name);
             ps.setDouble(3, price);
 
-            // Execute the deletion query
+            // Execute the query
             int rowsAffected = ps.executeUpdate();
 
-            // Check if any rows were affected (deleted)
+            // Check if any rows were affected (adding)
             return rowsAffected > 0;
+        } catch (NumberFormatException ex) {
+            throw new NumberException("Invalid number!");
         } catch (CommunicationsException em) {
-            System.out.println(em.getMessage());
             throw new DBException("Cannot connect to the database, try again!");
         } catch (SQLException sqlException) {
             throw new DBException("There was an error with the database!");
@@ -88,7 +93,7 @@ public class AddUpdateModel extends DB {
         }
     }
     
-     public boolean updateDish(int idDish, int idCat, String name, double price) throws DBException {
+    public boolean updateDish(int idDish, int idCat, String name, double price) throws DBException, NumberException {
         String sql = "UPDATE `dish` SET `catogoryId`=?,`name`=?,`price`=? WHERE id = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -102,7 +107,11 @@ public class AddUpdateModel extends DB {
 
             // Check if any rows were affected (deleted)
             return rowsAffected > 0;
-        } catch (CommunicationsException em) {
+        } 
+        catch (NumberFormatException ex) {
+            throw new NumberException("Invalid number!");
+        }
+        catch (CommunicationsException em) {
             System.out.println(em.getMessage());
             throw new DBException("Cannot connect to the database, try again!");
         } catch (SQLException sqlException) {

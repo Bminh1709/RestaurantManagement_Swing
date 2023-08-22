@@ -17,6 +17,9 @@ import java.sql.SQLException;
  */
 public class AccessModel extends DB {
 
+    public AccessModel() throws DBException {
+    }
+    
     public boolean authenticate(String username, String password) throws DBException {
         String sql = "SELECT COUNT(*) FROM `admin` WHERE username = ? AND password = ?";
         try {
