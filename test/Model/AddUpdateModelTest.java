@@ -5,6 +5,8 @@
 package Model;
 
 import Entity.Category;
+import Helper.DBException;
+import Helper.NumberException;
 import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -19,13 +21,13 @@ public class AddUpdateModelTest {
     private AddUpdateModel addUpdateModel;
 
     @Before
-    public void setUp() {
+    public void setUp() throws DBException {
         // Initialize the addUpdateModel instance if needed
         addUpdateModel = new AddUpdateModel();
     }
 
     @Test
-    public void testGetListCategory() {
+    public void testGetListCategory() throws DBException {
         List<Category> categories = addUpdateModel.getListCategory();
 
         assertNotNull(categories);
@@ -33,7 +35,7 @@ public class AddUpdateModelTest {
     }
 
     @Test
-    public void testCheckDishExist() {
+    public void testCheckDishExist() throws DBException {
         int idCat = 36;
         String dishName = "Test Dish";
 
@@ -43,7 +45,7 @@ public class AddUpdateModelTest {
     }
 
     @Test
-    public void testAddDish() {
+    public void testAddDish() throws DBException, NumberException {
         int idCat = 2; 
         String name = "Test Dish";
         double price = 10999;
@@ -54,8 +56,8 @@ public class AddUpdateModelTest {
     }
 
     @Test
-    public void testUpdateDish() {
-        int idDish = 36; 
+    public void testUpdateDish() throws DBException, NumberException {
+        int idDish = 51; 
         int idCat = 1; 
         String name = "Updated Dish";
         double price = 15999;

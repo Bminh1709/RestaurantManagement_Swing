@@ -41,8 +41,8 @@ public class CategoryTest {
     @Test
     public void testGetName() {
         System.out.println("getName");
-        Category instance = new Category();
-        String expResult = "";
+        Category instance = new Category(1,"Parama");
+        String expResult = "Parama";
         String result = instance.getName();
         assertEquals(expResult, result);
     }

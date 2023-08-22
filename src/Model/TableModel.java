@@ -23,7 +23,10 @@ import java.util.List;
  * @author MINH
  */
 public class TableModel extends DB {
-    
+
+    public TableModel() throws DBException {
+    }
+
     public ArrayList<Order> getListOrders() throws DBException {
         // Create list DishDetail
         ArrayList<Order> list = new ArrayList<>();

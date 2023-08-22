@@ -8,8 +8,6 @@ import Controller.AccessController;
 import Helper.DBException;
 import Model.AccessModel;
 import java.awt.Color;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 

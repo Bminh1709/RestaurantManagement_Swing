@@ -7,6 +7,7 @@ package Model;
 import Entity.Category;
 import Entity.Dish;
 import Entity.Order;
+import Helper.DBException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -22,12 +23,12 @@ public class TableModelTest {
     private TableModel tableModel;
 
     @Before
-    public void setUp() {
+    public void setUp() throws DBException {
         tableModel = new TableModel();
     }
 
     @Test
-    public void testGetListOrders() {
+    public void testGetListOrders() throws DBException {
         ArrayList<Order> orders = tableModel.getListOrders();
 
         assertNotNull(orders); // Check if the list is not null
@@ -35,7 +36,7 @@ public class TableModelTest {
     }
 
     @Test
-    public void testGetListCategory() {
+    public void testGetListCategory() throws DBException {
         List<Category> categories = tableModel.getListCategory();
 
         assertNotNull(categories); // Check if the list is not null
@@ -43,7 +44,7 @@ public class TableModelTest {
     }
 
     @Test
-    public void testGetListDishes() {
+    public void testGetListDishes() throws DBException {
         int categoryId = 1; 
         List<Dish> dishes = tableModel.getListDishes(categoryId);
 
@@ -52,22 +53,22 @@ public class TableModelTest {
     }
 
     @Test
-    public void testAddNewTable() {
+    public void testAddNewTable() throws DBException {
         String customerName = "Test Customer";
         tableModel.addNewTable(customerName);
     }
 
     @Test
-    public void testDeleteEmptyOrder() {
-        int orderId = 9; // Order just added above
+    public void testDeleteEmptyOrder() throws DBException {
+        int orderId = 17; // Order just added above
         boolean result = tableModel.deleteEmptyOrder(orderId);
         assertTrue(result);
     }
 
     @Test
-    public void testAddDishForOrder() {
-        int dishId = 4;
-        int orderId = 9;
+    public void testAddDishForOrder() throws DBException {
+        int dishId = 36;
+        int orderId = 18;
         int quantity = 2;
         double modifiedPrice = 12999;
 

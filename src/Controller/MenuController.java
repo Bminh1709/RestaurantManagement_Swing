@@ -21,7 +21,7 @@ public class MenuController extends DB{
     private MenuModel menuModel;
     private Menu menuView;
 
-    public MenuController(MenuModel menuModel, Menu menuView) {
+    public MenuController(MenuModel menuModel, Menu menuView) throws DBException {
         this.menuModel = menuModel;
         this.menuView = menuView;
     }

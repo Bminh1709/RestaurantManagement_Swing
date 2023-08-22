@@ -6,6 +6,7 @@ package Controller;
 
 import Entity.Category;
 import Helper.DBException;
+import Helper.NumberException;
 import Model.AddUpdateModel;
 import View.AddUpdateForm;
 import java.util.List;
@@ -32,7 +33,7 @@ public class AddUpdateDishController {
         }
     }
     
-    public void addDish(int idCat, String name, double price) throws DBException {
+    public void addDish(int idCat, String name, double price) throws DBException, NumberException {
         try {
             boolean checkDishExist = addUpdateModel.checkDishExist(idCat, name);
             if (checkDishExist == true) // the Dish has been existed - cannot add new
@@ -50,12 +51,13 @@ public class AddUpdateDishController {
                 else
                     addUpdateView.resultAddUpdateDish(-1);
         }
-        } catch (DBException dbException) {
-            addUpdateView.Error("An error occurred: " + dbException.getMessage());
+        } 
+        catch (NumberFormatException | DBException ex) {
+            addUpdateView.Error("An error occurred: " + ex.getMessage());
         }
     }
     
-      public void updateDish(int idDish, int idCat, String name, double price) throws DBException {
+    public void updateDish(int idDish, int idCat, String name, double price) throws DBException, NumberException {
         try {
             boolean checkUpdateDish = addUpdateModel.updateDish(idDish, idCat, name, price);
             if (checkUpdateDish) {
@@ -64,8 +66,8 @@ public class AddUpdateDishController {
             }
             else
                 addUpdateView.resultAddUpdateDish(-1);
-        } catch (DBException dbException) {
-            addUpdateView.Error("An error occurred: " + dbException.getMessage());
+        } catch (NumberFormatException | DBException ex) {
+            addUpdateView.Error("An error occurred: " + ex.getMessage());
         }
     }
 }

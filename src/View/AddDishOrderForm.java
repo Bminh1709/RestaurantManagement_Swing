@@ -68,7 +68,7 @@ public class AddDishOrderForm extends javax.swing.JFrame {
             public void windowClosed(WindowEvent e) {
                 try {
                     updateTotalPriceForOrder();
-                } catch (DBException ex) {
+                } catch (NumberFormatException | DBException ex) {
                     JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -220,7 +220,7 @@ public class AddDishOrderForm extends javax.swing.JFrame {
             addDishOrderController.addDishForOrder(dishID, orderID, quantity, modifiedPrice);
         } catch (DBException ex) {
             JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        } 
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void cbbCategoryItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbbCategoryItemStateChanged

@@ -353,7 +353,7 @@ public class Menu extends javax.swing.JFrame {
 
     private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
         JFileChooser fileChooser = new JFileChooser(); // Initial a JFileChooser
-        fileChooser.setDialogTitle("Chọn file muốn nhập");
+        fileChooser.setDialogTitle("Choose file to import");
         int userSelection = fileChooser.showOpenDialog(this); // showOpenDialog - Import
         int count = 0; // Count the element that exist in DB
         String msg = "";
