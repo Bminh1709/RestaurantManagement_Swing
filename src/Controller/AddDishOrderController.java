@@ -44,8 +44,15 @@ public class AddDishOrderController {
     
     public void addDishForOrder(int dishID, int orderID, int quantity, double modifiedPrice) throws DBException {
         try {
-            boolean checkAddDishForOrder = tableModel.addDishForOrder(dishID, orderID, quantity, modifiedPrice);
-            addDishOrderView.resultAddDishForOrder(checkAddDishForOrder);
+            boolean checkOrderStatus = tableModel.checkOrderStatus(orderID);
+            if (checkOrderStatus) {
+                addDishOrderView.resultCheckBillStatus(checkOrderStatus);
+            }
+            else
+            {
+                boolean checkAddDishForOrder = tableModel.addDishForOrder(dishID, orderID, quantity, modifiedPrice);
+                addDishOrderView.resultAddDishForOrder(checkAddDishForOrder);
+            }
         } catch (DBException dbException) {
             addDishOrderView.Error("An error occurred: " + dbException.getMessage());
         }

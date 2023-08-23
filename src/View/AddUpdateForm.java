@@ -13,8 +13,6 @@ import Model.AddUpdateModel;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -117,6 +115,11 @@ public class AddUpdateForm extends javax.swing.JFrame {
         txtName.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Name", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 0, 14))); // NOI18N
         txtName.setMinimumSize(new java.awt.Dimension(70, 41));
         txtName.setPreferredSize(new java.awt.Dimension(70, 41));
+        txtName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNameActionPerformed(evt);
+            }
+        });
 
         btnUpsert.setBackground(new java.awt.Color(66, 134, 245));
         btnUpsert.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
@@ -136,6 +139,11 @@ public class AddUpdateForm extends javax.swing.JFrame {
         txtPrice.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Price", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Bahnschrift", 0, 14))); // NOI18N
         txtPrice.setMinimumSize(new java.awt.Dimension(70, 41));
         txtPrice.setPreferredSize(new java.awt.Dimension(70, 41));
+        txtPrice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPriceActionPerformed(evt);
+            }
+        });
         txtPrice.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtPriceKeyTyped(evt);
@@ -215,7 +223,7 @@ public class AddUpdateForm extends javax.swing.JFrame {
                     addUpdateController.addDish(Integer.parseInt(category), name, price);
             } catch (DBException ex) {
                 JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (NumberException ex) {
+            } catch (NumberException | NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Invalid price format. Please enter a valid number!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -242,6 +250,14 @@ public class AddUpdateForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_formWindowClosed
+
+    private void txtPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPriceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPriceActionPerformed
+
+    private void txtNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNameActionPerformed
 
     /**
      * @param args the command line arguments

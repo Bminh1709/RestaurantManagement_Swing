@@ -206,6 +206,26 @@ public class TableModel extends DB {
         }
     }
     
+    public boolean checkOrderStatus(int orderID) throws DBException {
+        String sql = "SELECT * FROM `orders` WHERE id = ? AND status = true";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, orderID);
+            
+            ResultSet rs = ps.executeQuery();
+
+            // if status = true => return yes
+            return rs.next();
+        } catch (CommunicationsException em) {
+            System.out.println(em.getMessage());
+            throw new DBException("Cannot connect to the database, try again!");
+        } catch (SQLException sqlException) {
+            throw new DBException("There was an error with the database!");
+        } catch (Exception e) {
+            throw new DBException("There was a error, try again!");
+        }
+    }
+    
     public boolean addDishForOrder(int dishID, int orderID, int quantity, double modifiedPrice) throws DBException {
         String sql = "INSERT INTO `detail`(`id`, `idDish`, `idOrder`, `quantity`, `priceDish`) VALUES (NULL,?,?,?,?)";
         try {
