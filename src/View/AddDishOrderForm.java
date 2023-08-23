@@ -12,8 +12,6 @@ import Helper.FormatPrice;
 import Model.TableModel;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
@@ -328,8 +326,14 @@ public class AddDishOrderForm extends javax.swing.JFrame {
         }
     }
     
+    public void resultCheckBillStatus(boolean result) throws DBException {
+        if (result == true) {
+            JOptionPane.showMessageDialog(this, "This order has been paid, please place a new order!");
+        }
+    }
+    
     public void Error(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Sign In Failed", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, msg, "Failed", JOptionPane.ERROR_MESSAGE);
     }
     
 }
